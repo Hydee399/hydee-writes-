@@ -477,3 +477,82 @@ onAuthStateChanged(auth,u=>{
   },()=>R());
 });
 </script></body></html>
+<script>
+/* Hydee writes patch: offline-first, resume, history, imports, floating toolbar */
+(()=>{
+const K='hw2';let LT={};
+const persist=()=>{try{localStorage.setItem(K,JSON.stringify({items:S.items,nav,lt:LT}))}catch(e){}};
+try{const d=JSON.parse(localStorage.getItem(K)||'null');if(d){S.items=d.items||[];LT=d.lt||{};if(d.nav&&(d.nav.v!='edit'||S.items.some(x=>x.id==d.nav.id)))nav=d.nav}}catch(e){}
+/* signed-out Firebase callback must not wipe local work */
+let _it=S.items;Object.defineProperty(S,'items',{enumerable:true,get:()=>_it,set:v=>{if(Array.isArray(v)&&!v.length&&_it.length&&window.U===null&&!window.wipeOk)return;_it=v}});
+purgeBin=function(id){window.wipeOk=1;S.items=S.items.filter(x=>x.id!=id);window.wipeOk=0;save();R()};
+setInterval(persist,1500);
+addEventListener('pagehide',()=>{if(nav.v=='edit')mkSnap();persist()});
+document.addEventListener('visibilitychange',()=>{if(document.hidden){if(nav.v=='edit')mkSnap();persist()}});
+try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}
+
+/* safe cur + offline-first render (no waiting on login) */
+cur=function(){const i=get(nav.id);if(!i)return[null,null];if(i.type!='folder')return[i,i];const t=i.tabs.find(x=>x.id==nav.tab)||i.tabs[0];nav.tab=t.id;LT[i.id]=t.id;return[i,t]};
+R=function(){ap();if(nav.v=='edit'&&!get(nav.id))nav={v:'home'};document.body.classList.toggle('ed',nav.v=='edit');
+if(!S.set.w){welcome();return}
+if(nav.v!='edit'&&window.late){const s=window.late;window.late=null;if(!window.sync())window.apply(s)}
+({home,bin,edit})[nav.v]();if(nav.v=='home')lpb();persist()};
+opn=function(id){const i=get(id);if(!i)return;nav={v:'edit',id,tab:i.type=='folder'?(i.tabs.find(x=>x.id==LT[id])||i.tabs[0]).id:null};R()};
+const h0=home;home=function(){h0();const l=S.items.filter(i=>!i.del).sort((a,b)=>b.up-a.up)[0],m=$('#lib');
+if(l&&m)m.insertAdjacentHTML('beforebegin',`<div style="max-width:900px;margin:0 auto;padding:0 14px 12px"><button class=p style="width:100%;border-radius:16px;padding:12px;justify-content:flex-start" onclick="opn('${l.id}')">✍️ Continue: ${esc(l.title)}</button></div>`)};
+const sm0=sideMenu;sideMenu=function(){sm0();if(!window.U)$('#sh .bx').insertAdjacentHTML('beforeend','<button class=dr onclick="cl();gs()"><span>☁️ Sign in to sync</span>›</button>')};
+
+/* more history: up to 40 snapshots per chapter, one every 30 min */
+mkSnap=function(force){const[i,t]=cur();if(!i)return;const k=sk(),a=SN[k]=SN[k]||[],l=a[a.length-1];if(!txt(t.c).trim())return;if(l&&(l.c===t.c||(!force&&Date.now()-l.at<18e5)))return;a.push({at:Date.now(),c:t.c});while(a.length>40)a.shift();try{localStorage.setItem('hw_snaps',JSON.stringify(SN))}catch(e){}};
+setInterval(()=>{if(nav.v=='edit')mkSnap()},6e4);
+
+/* imports: txt, md, html, docx, epub, json backup */
+async function unzip(buf){const v=new DataView(buf),u=new Uint8Array(buf),D=new TextDecoder(),F={};let e=buf.byteLength-22;while(e>=0&&v.getUint32(e,true)!=0x06054b50)e--;
+const n=v.getUint16(e+10,true);let p=v.getUint32(e+16,true);
+for(let k=0;k<n;k++){const m=v.getUint16(p+10,true),cs=v.getUint32(p+20,true),nl=v.getUint16(p+28,true),xl=v.getUint16(p+30,true),cl=v.getUint16(p+32,true),o=v.getUint32(p+42,true),nm=D.decode(u.subarray(p+46,p+46+nl)),ho=o+30+v.getUint16(o+26,true)+v.getUint16(o+28,true),raw=u.subarray(ho,ho+cs);
+F[nm]=async()=>m==0?D.decode(raw):D.decode(await new Response(new Blob([raw]).stream().pipeThrough(new DecompressionStream('deflate-raw'))).arrayBuffer());p+=46+nl+xl+cl}return F}
+const x2d=s=>new DOMParser().parseFromString(s,'application/xml');
+const d2h=x=>[...x2d(x).getElementsByTagName('w:p')].map(p=>{let h='';[...p.getElementsByTagName('w:r')].forEach(r=>{let t=[...r.getElementsByTagName('w:t')].map(a=>a.textContent).join('');if(!t)return;t=esc(t);if(r.getElementsByTagName('w:b').length)t='<b>'+t+'</b>';if(r.getElementsByTagName('w:i').length)t='<i>'+t+'</i>';h+=t});return h?'<p>'+h+'</p>':''}).join('');
+const t2h=s=>s.split(/\n+/).filter(l=>l.trim()).map(l=>{const m=l.match(/^(#{1,3})\s+(.*)/);return m?`<h${m[1].length}>${esc(m[2])}</h${m[1].length}>`:'<p>'+esc(l)+'</p>'}).join('');
+const now=()=>Date.now(),mkI=(o)=>({id:uid(),up:now(),cr:now(),log:[{at:now(),e:'Imported'}],...o});
+$('#imp').accept='.txt,.md,.html,.htm,.docx,.epub,.json,text/plain';
+$('#imp').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;
+const ext=f.name.split('.').pop().toLowerCase(),title=f.name.replace(/\.\w+$/,'');
+try{
+if(ext=='json'){const j=JSON.parse(await f.text()),a=Array.isArray(j)?j:j.items||[];let n=0;a.forEach(x=>{if(x&&x.id&&!get(x.id)){S.items.push(x);n++}});save();R();sheet(`<h3>📥 Restored</h3><p>${n} new item(s) added.</p><div class=row><button class=p onclick="cl()">Nice</button></div>`);return}
+let it;
+if(ext=='docx'){const z=await unzip(await f.arrayBuffer());it=mkI({type:'doc',title,c:d2h(await z['word/document.xml']())})}
+else if(ext=='epub'){const z=await unzip(await f.arrayBuffer()),opf=(await z['META-INF/container.xml']()).match(/full-path="([^"]+)"/)[1],dir=opf.includes('/')?opf.replace(/[^/]*$/,''):'',o=x2d(await z[opf]()),mf={};
+[...o.getElementsByTagName('item')].forEach(x=>mf[x.getAttribute('id')]=x.getAttribute('href'));
+const tabs=[];for(const r of o.getElementsByTagName('itemref')){const h=mf[r.getAttribute('idref')],fn=z[dir+decodeURIComponent(h||'')];if(!fn)continue;const d=new DOMParser().parseFromString(await fn(),'text/html'),c=cleanHTML(d.body?d.body.innerHTML:'');if(txt(c).trim().length>20)tabs.push({id:uid(),t:'',c})}
+it=mkI({type:'folder',title,tabs:tabs.length?tabs:[{id:uid(),t:'Prologue',c:''}]})}
+else if(ext=='html'||ext=='htm'){const d=new DOMParser().parseFromString(await f.text(),'text/html');it=mkI({type:'doc',title:d.title||title,c:cleanHTML(d.body.innerHTML)})}
+else it=mkI({type:'doc',title,c:t2h(await f.text())});
+S.items.push(it);save();R()}
+catch(err){sheet('<h3>Couldn\'t import that file</h3><p style="color:var(--mut)">It may be damaged or an unsupported format.</p><div class=row><button class=p onclick="cl()">OK</button></div>')}};
+const am0=addm;addm=function(){am0();const s=$('#sh');s.innerHTML=s.innerHTML.replace('a .txt or .md from your device','.txt .md .html .docx .epub or a .json backup')};
+const sn0=setn;setn=function(){sn0();const b=$('#sh .bx');b&&b.insertAdjacentHTML('beforeend','<button onclick="cl();$(\'#imp\').click()">📥 Import a file / restore backup</button>')};
+
+/* Reedsy-style floating selection toolbar (sits below the native Cut/Copy menu) */
+const css=document.createElement('style');css.textContent='#ftb{position:fixed;z-index:8;width:min(94vw,372px);background:#2b3a4d;color:#fff;border-radius:10px;box-shadow:0 6px 22px #0006;overflow:hidden}#ftb div{display:flex}#ftb div+div{background:#232f3f}#ftb button{flex:1;min-width:0;height:46px;padding:0;color:#fff;border-radius:0;font-size:16px}#ftb button:hover{background:#3a4b61}#ed blockquote{border-left:3px solid var(--ac);margin:.6em 0;padding-left:1em;font-style:italic;text-indent:0}#ed code{font-family:"Courier Prime",monospace;background:var(--hl);padding:0 .25em;border-radius:4px}#ed ul,#ed ol{text-indent:0}';document.head.appendChild(css);
+const B=(k,l)=>`<button data-k=${k}>${l}</button>`,ROWS='<div>'+B('p','¶')+B('h','H<sub>1</sub>')+B('al','☰')+B('ol','1.')+B('ul','•')+B('q','❝')+B('cd','&lt;/&gt;')+'</div><div>'+B('b','<b>B</b>')+B('i','<i>I</i>')+B('u','<u>U</u>')+B('s','<s>S</s>')+B('sup','x²')+B('lk','🔗')+B('hl','🖍')+B('cm','💬')+'</div>';
+const X=(c,v)=>document.execCommand(c,false,v),Q=c=>document.queryCommandState(c),blk=t=>X('formatBlock','<'+(document.queryCommandValue('formatBlock').toLowerCase()==t?'p':t)+'>');
+function fx(k){const ed=$('#ed');let lr=null;const s=getSelection();if(s.rangeCount)lr=s.getRangeAt(0).cloneRange();
+const M={p:()=>X('formatBlock','<p>'),h:()=>blk('h1'),al:()=>X(Q('justifyCenter')?'justifyRight':Q('justifyRight')?'justifyLeft':'justifyCenter'),ol:()=>X('insertOrderedList'),ul:()=>X('insertUnorderedList'),q:()=>blk('blockquote'),
+cd:()=>X('insertHTML','<code>'+esc(s.toString())+'</code>'),b:()=>X('bold'),i:()=>X('italic'),u:()=>X('underline'),s:()=>X('strikeThrough'),sup:()=>X('superscript'),
+hl:()=>X('hiliteColor',/253,\s*230,\s*138/.test(document.queryCommandValue('hiliteColor'))?'transparent':'#fde68a'),cm:()=>cmt(),
+lk:()=>ask('Link address','https://',u=>{ed.focus();if(lr){const g=getSelection();g.removeAllRanges();g.addRange(lr)}X('createLink',u);ed.dispatchEvent(new Event('input'))})};
+M[k]&&M[k]();if(k!='cm'&&k!='lk'){ed.dispatchEvent(new Event('input'));fbar()}}
+function fbar(){let b=$('#ftb');const s=getSelection(),ed=$('#ed');
+if(nav.v!='edit'||!ed||!s.rangeCount||s.isCollapsed||!ed.contains(s.anchorNode)||!$('#sh').hidden){b&&b.remove();return}
+if(!b){b=document.createElement('div');b.id='ftb';b.innerHTML=ROWS;b.onpointerdown=e=>e.preventDefault();b.onclick=e=>{const k=e.target.closest('button');k&&fx(k.dataset.k)};document.body.appendChild(b)}
+const r=s.getRangeAt(0).getBoundingClientRect(),h=b.offsetHeight,w=b.offsetWidth,bar=$('.bar'),lim=(bar?bar.getBoundingClientRect().top:innerHeight)-8;
+let y=r.bottom+26;if(y+h>lim)y=Math.max(60,r.top-h-64);
+b.style.top=y+'px';b.style.left=Math.max(6,Math.min(innerWidth-w-6,r.left+r.width/2-w/2))+'px'}
+let ft;document.addEventListener('selectionchange',()=>{clearTimeout(ft);ft=setTimeout(fbar,60)});
+document.addEventListener('scroll',()=>fbar(),true);
+
+R();
+})();
+</script>
+
