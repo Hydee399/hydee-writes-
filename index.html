@@ -1,0 +1,417 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Hydee writes</title>
+<link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-192.png"><meta name="theme-color" content="#8b5a2b"><meta name="apple-mobile-web-app-capable" content="yes">
+<link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,400;0,700;1,400&family=Inter:wght@400;600&family=Dancing+Script:wght@600&family=Playfair+Display:ital,wght@0,600;1,500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#ffffff;--fg:#3b2530;--mut:#9a7b88;--card:#fff5f8;--bd:#f3d9e1;--ac:#b0587a;--hl:#fde8ef;--desk:#fbeef3;--br:#8b5a2b;--ef:Merriweather,Georgia,serif;--sz:18px;--lh:1.8;--ps:0em;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme]){--bg:#2b2c30;--fg:#e8e8ea;--mut:#a79d94;--card:#36373c;--bd:#46474d;--ac:#e8a0bb;--hl:#40303a;--br:#f0b88a;--desk:#232427}}
+:root[data-theme=dark]{--bg:#2b2c30;--fg:#e8e8ea;--mut:#a79d94;--card:#36373c;--bd:#46474d;--ac:#e8a0bb;--hl:#40303a;--br:#f0b88a;--desk:#232427}
+:root[data-theme=sepia]{--bg:#f6ecdc;--fg:#3b2a1a;--mut:#8a7258;--card:#efe1cb;--bd:#dcc8a8;--ac:#7a4a1f;--hl:#e8d5b5;--desk:#e6d6bb;--br:#7a4a1f}
+:root[data-theme=blush]{--bg:#fff3f6;--fg:#4a2433;--mut:#a67a8b;--card:#ffe8ef;--bd:#f6cddb;--ac:#c2456f;--hl:#fcd9e4;--desk:#f9d3e0;--br:#8b4a3a}
+:root[data-theme=lilac]{--bg:#faf6ff;--fg:#33264a;--mut:#8b7aa8;--card:#f0e8fc;--bd:#e0d2f5;--ac:#8a5cc4;--hl:#eadcfb;--desk:#e6d9f8;--br:#6d4a9c}
+:root[data-theme=mint]{--bg:#f6fffb;--fg:#1f3a30;--mut:#6f9585;--card:#e4f7ee;--bd:#cdebdc;--ac:#3f9d7a;--hl:#d5f2e5;--desk:#d3efe2;--br:#2f6f58}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(180deg,var(--hl),var(--bg) 260px) no-repeat var(--bg);color:var(--fg);font:16px Inter,system-ui,sans-serif}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;display:flex;align-items:center;gap:4px;padding:8px 12px;background:linear-gradient(90deg,var(--hl),var(--bg));border-bottom:2px solid var(--ac)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:10}
+h1{font-size:30px;margin:0;flex:1;color:var(--ac);font-family:'Dancing Script','Playfair Display',Georgia,cursive;font-weight:600}.sp{flex:1}
+button{font:inherit;color:var(--fg);background:none;border:0;padding:8px 10px;border-radius:8px;cursor:pointer}
+button:hover{background:var(--hl)}
+main{padding:14px;max-width:900px;margin:auto}
+.search-box{padding:0 14px 8px;max-width:900px;margin:auto}
+.search-box input{width:100%;padding:9px 14px;border:1px solid var(--bd);border-radius:20px;background:var(--card);color:var(--fg);font:inherit;outline:0}
+.search-box input:focus{border-color:var(--ac)}
+.sync-badge{font-size:11px;padding:3px 9px;border-radius:12px;background:var(--hl);color:var(--ac);font-weight:600;display:inline-flex;align-items:center;gap:4px;white-space:nowrap;user-select:none}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px}
+.cd{border:1px solid var(--bd);border-top:5px solid var(--c,var(--ac));border-radius:18px;background:var(--card);overflow:hidden;cursor:pointer;box-shadow:0 3px 12px #b0587a24;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+.pv{height:120px;padding:10px;font:11px/1.4 var(--ef);color:var(--mut);overflow:hidden;background:var(--bg);margin:8px 8px 0;border-radius:6px}
+.ct{display:flex;align-items:center;justify-content:space-between;padding:6px 6px 6px 12px;gap:4px}
+.ct span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.list .cd{display:flex;align-items:center;margin-bottom:8px}.list .pv{display:none}.list .ct{flex:1}
+.fab{position:fixed;right:18px;bottom:calc(18px + env(safe-area-inset-bottom,0px));width:50px;height:50px;border-radius:50%;background:linear-gradient(135deg,var(--ac),#e58fb0);color:#fff;font-size:26px;box-shadow:0 4px 14px #0004}
+.fab:hover{background:var(--ac)}.em{color:var(--mut);text-align:center;margin-top:60px}
+#ed{max-width:720px;margin:0 auto 90px;padding:28px 26px 60px;min-height:70vh;outline:0;background:var(--bg);border-radius:6px;box-shadow:0 2px 18px #5a3a1a26;font-family:var(--ef);font-size:var(--sz);line-height:var(--lh)}
+#ed{text-indent:var(--ind,1.6em)}#ed p,#ed div{margin:0 0 var(--ps)}
+#sh{position:fixed;inset:0;z-index:20;display:flex;flex-direction:column;justify-content:flex-end}
+#sh[hidden]{display:none}.bk{position:absolute;inset:0;background:#0007}
+.bx{position:relative;background:var(--bg);border-radius:20px 20px 0 0;padding:16px 16px calc(16px + env(safe-area-inset-bottom,0px));max-height:80vh;overflow:auto;max-width:600px;width:100%;margin:auto auto 0}
+.bx h3{margin:0 0 10px}.bx>button{display:block;width:100%;text-align:left;padding:13px 10px}
+.bx input[type=text]{width:100%;padding:10px;margin:4px 0;border:1px solid var(--bd);border-radius:8px;background:var(--card);color:var(--fg);font:inherit}
+.bx input[type=range]{width:100%}.bx label{display:block;margin-top:10px;color:var(--mut);font-size:14px}
+.bx select{width:100%;padding:10px;border-radius:8px;background:var(--card);color:var(--fg);border:1px solid var(--bd);font:inherit}
+.row{display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end;margin-top:10px}.p,.on{background:var(--ac);color:#fff}
+.tb{display:flex;align-items:center}.tb>span{flex:1;overflow:hidden;text-overflow:ellipsis}.cur{background:var(--hl);border-radius:10px;color:var(--ac)}.bar{position:fixed;left:0;right:0;bottom:var(--kb,0px);z-index:6;display:flex;gap:6px;padding:8px 10px calc(8px + var(--sb,0px));background:var(--hl);border-top:2px solid var(--ac);overflow-x:auto}.bar button{background:var(--bg);border:1px solid var(--bd);min-width:38px;padding:6px 8px;color:var(--ac);font-weight:700;display:flex;align-items:center;justify-content:center;flex:none}.bar button:hover{background:var(--ac);color:#fff}.desk{background:var(--desk);position:fixed;left:0;right:0;top:calc(54px + env(safe-area-inset-top,0px));bottom:calc(var(--kb,0px) + 50px + var(--sb,0px));overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px 10px 30vh}body.ed{overflow:hidden}
+.cm{background:#ffe59a99;border-bottom:2px solid #e0a800;border-radius:3px;cursor:pointer}
+#ed h1,#ed h2,#ed h3{text-indent:0;color:var(--br);font-family:'Playfair Display',Georgia,serif;margin:.8em 0 .5em;line-height:1.3}#ed h1{font-size:1.7em;text-align:center}#ed h2{font-size:1.3em}#ed h3{font-size:1.1em;font-style:italic}
+.mg{display:grid;grid-template-columns:1fr 1fr;gap:10px}.mg button{display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:14px;font-size:13px;background:var(--hl);border:1px solid var(--bd);font-weight:600}.mg button span{font-size:19px}
+.pg{max-width:720px;margin:0 auto;background:var(--bg);border-radius:22px;box-shadow:0 4px 24px #b0587a26;padding:34px 26px 40px}
+.pg #ed{background:none;box-shadow:none;padding:0;margin:0;min-height:50vh;border-radius:0}
+.chn{text-align:center;font:600 62px 'Playfair Display',Georgia,serif;color:var(--ac);opacity:.45;line-height:1;margin-bottom:10px}
+.cht{text-align:center;font:600 30px 'Playfair Display',Georgia,serif;color:var(--br);outline:0;margin:6px 0 28px;line-height:1.25;min-height:1.25em}
+.cht:empty::before{content:attr(data-ph);color:var(--mut);opacity:.6;font-weight:400}
+#ed.emp p:first-child::before{content:'Begin your story here…';color:var(--mut);opacity:.7;font-style:italic;text-indent:0}
+#sh.side{flex-direction:row;justify-content:flex-start}#sh.side .bx{margin:0;width:84%;max-width:330px;height:100%;max-height:none;border-radius:0 26px 26px 0;padding-top:calc(22px + env(safe-area-inset-top,0px))}
+.st{display:flex;align-items:baseline;gap:10px;padding:10px 14px;margin:8px 0;background:var(--hl);border-radius:16px}.st b{font:600 26px 'Playfair Display',Georgia,serif;color:var(--ac)}.st span{color:var(--mut);font-size:14px}
+.cr{display:grid;gap:10px}.cr button{display:block;width:100%;text-align:left;padding:14px 16px;border-radius:18px;background:linear-gradient(135deg,var(--a),var(--b));color:#3b2530;border:0}.cr b{display:block;font-size:17px}.cr i{font-size:13px;opacity:.75;font-style:normal}
+.gl{height:10px;background:var(--bd);border-radius:6px;overflow:hidden;margin:6px 0}.gl div{height:100%;background:linear-gradient(90deg,var(--ac),#e58fb0)}.gt{margin:2px 0 8px;color:var(--mut);font-size:14px}
+.hd2{flex:none!important;padding:8px 10px;color:var(--mut);cursor:grab;touch-action:none;font-size:18px;user-select:none;-webkit-user-select:none}
+.sw{width:44px;height:26px;border-radius:14px;background:var(--bd);position:relative;display:inline-block;flex:none}.sw i{position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:.2s}.sw.on2{background:var(--ac)}.sw.on2 i{left:21px}
+.dr{display:flex!important;justify-content:space-between;align-items:center;color:var(--fg)}
+#ed,.cht{caret-color:var(--ac)}
+</style></head><body><div id="app"></div><div id="sh" hidden></div>
+<input type="file" id="imp" accept=".txt,.md,text/plain" hidden><input type="file" id="cov" accept="image/*" hidden><label id="hxl" style="position:fixed;left:-99px;top:0;opacity:0"><input type="checkbox" switch id="hx"></label>
+<script>
+const $=s=>document.querySelector(s);
+let S=null;try{S=JSON.parse(localStorage.getItem('hw')||'null')}catch(e){}
+S=S||{items:[],set:{theme:matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light',font:"Merriweather,Georgia,serif",size:18,lh:1.8,ps:0,view:'grid'}};
+if(S.set.v!=2){S.set.theme='light';S.set.v=2}
+S.items=[];
+let filterQuery='';
+let st;
+const setStatus=txt=>{const b=$('#sync-st');if(b)b.textContent=txt};
+const save=()=>{
+  setStatus('Saving…');
+  try{localStorage.setItem('hw',JSON.stringify({set:S.set}))}catch(e){}
+  clearTimeout(st);
+  st=setTimeout(()=>{
+    if(window.sync){
+      setStatus('Syncing…');
+      window.sync();
+    }else{
+      setStatus('Saved offline');
+    }
+  },500);
+};
+const uid=()=>Math.random().toString(36).slice(2,9);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const txt=h=>{const d=document.createElement('div');d.innerHTML=h||'';return d.innerText||d.textContent||''};
+const get=id=>S.items.find(i=>i.id==id);
+const col=id=>['#e58fb0','#f0a58b','#c79ad8','#8fc3b0','#e7b95c','#b0587a'][[...id].reduce((a,c)=>a+c.charCodeAt(0),0)%6];
+let nav={v:'home'};
+
+function ap(){const r=document.documentElement,s=S.set;r.dataset.theme=s.theme=='auto'?(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'):s.theme;r.style.setProperty('--ef',s.font);r.style.setProperty('--sz',s.size+'px');r.style.setProperty('--lh',s.lh);r.style.setProperty('--ps',s.ps+'em');r.style.setProperty('--ind',(s.ind==null?1.6:s.ind)+'em')}
+function sheet(h){$('#sh').className='';$('#sh').innerHTML='<div class=bk onclick="cl()"></div><div class=bx>'+h+'</div>';$('#sh').hidden=false}
+function cl(){$('#sh').hidden=true;$('#sh').innerHTML=''}
+function ask(t,v,cb){sheet('<h3>'+t+'</h3><input type=text id=in value="'+esc(v)+'"><div class=row><button onclick="cl()">Cancel</button><button class=p id=ok>OK</button></div>');$('#in').focus();$('#ok').onclick=()=>{const x=$('#in').value.trim();cl();if(x)cb(x)}}
+
+function R(){
+  ap();
+  document.body.classList.toggle('ed',nav.v=='edit');
+  if(!S.set.w){welcome();return}
+  if(window.U===undefined){$('#app').innerHTML='<p class=em>Loading…</p>';return}
+  if(!window.U){login();return}
+  if(nav.v!='edit'&&window.late){const s=window.late;window.late=null;if(!window.sync())window.apply(s)}
+  ({home,bin,edit})[nav.v]();
+  if(nav.v=='home')lpb();
+}
+
+const card=i=>{
+  const t=i.type=='folder'?(i.tabs[0]||{}).c:i.c,f=i.type=='folder';
+  return `<div class=cd data-id="${i.id}" style="--c:${col(i.id)}" onclick="opn('${i.id}')"><div class=pv style="${i.cover?`background:url('${i.cover}') center/cover`:''}">${i.cover?'':esc(txt(t).slice(0,160))}</div><div class=ct><span>${i.pin?'📌 ':''}${f?'':'📄 '}${esc(i.title)}${f?' · '+i.tabs.length+' tabs':''}</span><button onclick="event.stopPropagation();menu('${i.id}')">⋯</button></div></div>`;
+};
+
+function home(){
+  let L=S.items.filter(i=>!i.del).sort((a,b)=>(b.pin?1:0)-(a.pin?1:0)||b.up-a.up);
+  if(filterQuery){
+    const q=filterQuery.toLowerCase();
+    L=L.filter(i=>{
+      const matchDoc=i.title.toLowerCase().includes(q)||(i.c&&txt(i.c).toLowerCase().includes(q));
+      const matchTabs=i.tabs&&i.tabs.some(t=>t.t.toLowerCase().includes(q)||txt(t.c).toLowerCase().includes(q));
+      return matchDoc||matchTabs;
+    });
+  }
+  const g=S.set.view=='grid';
+  $('#app').innerHTML=`<header><h1>Hydee writes</h1><button onclick="S.set.view=S.set.view=='grid'?'list':'grid';save();R()">${g?'☰ List':'▦ Grid'}</button><button onclick="nav={v:'bin'};R()">🗑</button><button onclick="setn()">⚙️</button></header>
+  <div class="search-box"><input type="search" placeholder="🔍 Search pieces and chapters…" value="${esc(filterQuery)}" oninput="filterQuery=this.value.trim();R();"></div>
+  <main class="${g?'grid':'list'}">${L.map(card).join('')||'<p class=em style="grid-column:1/-1">'+(filterQuery?'No matching pieces found.':'Nothing here yet. Tap + to start writing.')+'</p>'}</main>
+  <button class=fab onclick="addm()">+</button>`;
+}
+
+function addm(){sheet(`<h3>✨ What shall we create?</h3><div class=cr><button style="--a:#fde0ea;--b:#f9c6d8" onclick="cl();mk('doc')"><b>🌸 A fresh new piece</b><i>a blank page, ready for your words</i></button><button style="--a:#ede1fb;--b:#d9c6f4" onclick="cl();mk('folder')"><b>📚 A story folder</b><i>chapters, a cover &amp; a home for your novel</i></button><button style="--a:#dff3ea;--b:#c6e8d9" onclick="cl();$('#imp').click()"><b>💌 Bring in a file</b><i>a .txt or .md from your device</i></button></div>`)}
+function mk(t){ask(t=='doc'?'Name your piece':'Name your folder','',n=>{const i={id:uid(),type:t,title:n,up:Date.now(),cr:Date.now(),log:[{at:Date.now(),e:'Created'}]};if(t=='doc')i.c='';else i.tabs=[{id:uid(),t:'',c:''}];S.items.push(i);save();opn(i.id)})}
+$('#imp').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{const c=String(r.result).split(/\n+/).map(l=>'<p>'+esc(l)+'</p>').join('');const i={id:uid(),type:'doc',title:f.name.replace(/\.\w+$/,''),c,up:Date.now()};S.items.push(i);save();R()};r.readAsText(f);e.target.value=''};
+function opn(id){const i=get(id);nav={v:'edit',id,tab:i.type=='folder'?i.tabs[0].id:null};R()}
+function menu(id){const i=get(id),f=i.type=='folder';sheet(`<h3>${i.pin?'📌 ':''}${esc(i.title)}</h3><div class=mg>${[f?['➕','Add chapter','add']:0,['📚','Save as ePub','epub'],['📄','Save as Word','doc'],['📤','Send a copy','snd'],['📶','Available offline','off'],['✏️','Rename','rn'],['ℹ️','Details','det'],['🕘','Activity','act'],['📌',i.pin?'Unpin':'Pin','pin'],['📑','Duplicate','dup'],['🖼️',i.cover?'Change cover':'Add cover','cvr'],i.cover?['🧹','Remove cover','rcv']:0,['🗑️','Move to bin','dl2']].filter(Boolean).map(([e,l,k])=>`<button onclick="act('${k}','${id}')"><span>${e}</span>${l}</button>`).join('')}</div>`)}
+
+function bin(){
+  const now=Date.now(),L=S.items.filter(i=>i.del&&now-i.del<30*864e5);
+  $('#app').innerHTML=`<header><button onclick="nav={v:'home'};R()">←</button><h1>Bin</h1></header><main><p class=em style="margin:0 0 10px">Items are permanently removed after 30 days.</p>${L.map(i=>`<div class=cd style="margin-bottom:8px"><div class=ct><span>${esc(i.title)} · ${Math.max(0,30-Math.floor((now-i.del)/864e5))} days left</span><span class=tb><button onclick="delete get('${i.id}').del;save();R()">Restore</button><button onclick="purgeBinItem('${i.id}')">Delete</button></span></div></div>`).join('')||'<p class=em>Bin is empty.</p>'}</main>`;
+}
+function purgeBinItem(id){
+  S.items=S.items.filter(x=>x.id!=id);
+  save();
+  R();
+}
+
+function cur(){const i=get(nav.id);return [i,i.type=='folder'?i.tabs.find(x=>x.id==nav.tab):i]}
+
+function edit(){
+  const [i,t]=cur(),f=i.type=='folder',n=f?i.tabs.indexOf(t)+1:0;
+  $('#app').innerHTML=`<header><button onclick="nav={v:'home'};R()">←</button><button onclick="drw()">☰</button><button onclick="document.execCommand('undo')">↶</button><button onclick="document.execCommand('redo')">↷</button><span class="sync-badge" id="sync-st">Saved</span><span class=sp></span>${f?`<button onclick="tabs()">Ch. ${n} ▾</button>`:''}<button onclick="fnd()">🔍</button><button onclick="setn()">Aa</button><button onclick="expo()">⬇</button></header>
+  <div class=desk><div class=pg>${f?`<div class=chn>${n}</div>`:''}<div id=cht class=cht contenteditable=true spellcheck=true data-ph="${f?'Chapter title':'Title'}">${esc(f?ctt(t):i.title)}</div><div id=ed contenteditable=true spellcheck=true></div></div></div>
+  <div class=bar>${[['bold','<b>B</b>'],['italic','<i>I</i>'],['underline','<u>U</u>'],['justifyLeft',ai('l')],['justifyCenter',ai('c')],['justifyRight',ai('r')],['justifyFull',ai('j')]].map(([c,l])=>`<button onpointerdown="event.preventDefault()" onclick="document.execCommand('${c}')">${l}</button>`).join('')}<button onpointerdown="event.preventDefault()" onclick="hd()">Aa ▾</button><button onpointerdown="event.preventDefault()" onclick="cmt()">💬</button></div>`;
+
+  const ed=$('#ed'),ct=$('#cht');
+  document.execCommand('defaultParagraphSeparator',false,'p');
+  ed.innerHTML=t.c||'<p><br></p>';
+  const em=()=>ed.classList.toggle('emp',!txt(ed.innerHTML).trim());
+  em();
+  mkSnap();
+  if(!txt(ed.innerHTML).trim())ed.focus();
+
+  ed.oninput=()=>{
+    t.c=ed.innerHTML;i.up=Date.now();
+    const lg0=(i.log||[])[(i.log||[]).length-1];
+    if(!lg0||lg0.e!='Edited'||Date.now()-lg0.at>36e5)lg(i,'Edited');
+    save();em();requestAnimationFrame(keep);
+  };
+  ed.onclick=e=>{const c=e.target.closest&&e.target.closest('.cm');if(c)cmv(c)};
+  ed.onpaste=e=>{
+    const cb=e.clipboardData;if(!cb)return;e.preventDefault();
+    const h=cb.getData('text/html');
+    document.execCommand('insertHTML',false,h?cleanHTML(h):cb.getData('text/plain').split(/\n+/).map(l=>'<p>'+esc(l)+'</p>').join(''));
+  };
+
+  ed.onkeydown=e=>{
+    if((e.metaKey||e.ctrlKey)&&'biu'.includes(e.key)){e.preventDefault();document.execCommand({b:'bold',i:'italic',u:'underline'}[e.key])}
+    if((e.metaKey||e.ctrlKey)&&e.key==='s'){e.preventDefault();save();setStatus('Saved')}
+    if(e.key===' '){
+      const sel=window.getSelection();
+      if(sel&&sel.isCollapsed&&sel.anchorNode){
+        const text=sel.anchorNode.textContent||'';
+        const off=sel.anchorOffset;
+        const prefix=text.slice(0,off);
+        let block=null;
+        if(prefix==='#')block='h1';
+        else if(prefix==='##')block='h2';
+        else if(prefix==='###')block='h3';
+        if(block){
+          e.preventDefault();
+          sel.anchorNode.textContent=text.slice(off);
+          document.execCommand('formatBlock',false,'<'+block+'>');
+          ed.dispatchEvent(new Event('input'));
+        }
+      }
+    }
+  };
+
+  ct.oninput=()=>{const v=ct.innerText.replace(/\s+/g,' ').trim();if(f)t.t=v;else i.title=v||'Untitled';i.up=Date.now();save()};
+  ct.onkeydown=e=>{if(e.key=='Enter'){e.preventDefault();ed.focus()}};
+  ct.onpaste=e=>{e.preventDefault();document.execCommand('insertText',false,(e.clipboardData.getData('text')||'').replace(/\s+/g,' '))};
+
+  $('.desk').onclick=e=>{
+    if(e.target.closest('#ed,#cht'))return;
+    ed.focus();
+    const r=document.createRange();r.selectNodeContents(ed);r.collapse(false);
+    const s=getSelection();s.removeAllRanges();s.addRange(r);
+  };
+
+  const vv=window.visualViewport,kb=()=>{
+    const k=vv?Math.max(0,innerHeight-vv.height-vv.offsetTop):0,s=document.documentElement.style;
+    s.setProperty('--kb',k+'px');
+    s.setProperty('--sb',k>0?'0px':'env(safe-area-inset-bottom,0px)');
+  };
+  if(vv){vv.onresize=()=>{kb();setTimeout(keep,60)};vv.onscroll=kb}
+  kb();
+  document.onselectionchange=()=>{if(nav.v=='edit')setTimeout(keep,40)};
+}
+
+function tabs(){const [i]=cur();sheet('<h3>Chapters</h3><div id=tl>'+i.tabs.map(t=>`<div class="tb ${t.id==nav.tab?'cur':''}" data-id="${t.id}"><span class=hd2>⠿</span><button style="flex:1;text-align:left" onclick="nav.tab='${t.id}';cl();R()">📄 ${esc(tn(i,t))}</button><button onclick="tm('${t.id}')">⋯</button></div>`).join('')+'</div><button class=p style="margin-top:10px;width:100%;text-align:center" onclick="atab()">+ Add tab</button><p style="color:var(--mut);font-size:13px;margin:8px 0 0">Hold ⠿ and drag to reorder your chapters.</p>');dd()}
+function atab(){const [i]=cur(),t={id:uid(),t:'',c:''};i.tabs.push(t);lg(i,'Added a chapter');save();nav.tab=t.id;cl();R()}
+function tm(id){const [i]=cur(),t=i.tabs.find(x=>x.id==id);sheet(`<h3>${esc(tn(i,t))}</h3><button onclick="ask('Rename chapter','${esc(t.t).replace(/'/g,"\\'")}',n=>{t.t=n;save();R();tabs()})">Rename</button><button onclick="mv('${id}',-1)">Move up</button><button onclick="mv('${id}',1)">Move down</button>${i.tabs.length>1?`<button onclick="dt('${id}')">Delete tab</button>`:''}`)}
+function mv(id,d){const [i]=cur(),a=i.tabs,k=a.findIndex(x=>x.id==id),j=k+d;if(j<0||j>=a.length)return cl();[a[k],a[j]]=[a[j],a[k]];save();tabs()}
+function dt(id){const [i]=cur();i.tabs=i.tabs.filter(x=>x.id!=id);if(nav.tab==id)nav.tab=i.tabs[0].id;save();cl();R()}
+function fnd(){sheet('<h3>Find and replace</h3><input type=text id=fa placeholder="Find" oninput="fc()"><input type=text id=fb placeholder="Replace with"><p id=fm style="color:var(--mut);margin:6px 0"></p><div class=row><button onclick="cl()">Close</button><button class=p onclick="rep()">Replace all</button></div>')}
+function fc(){const a=$('#fa').value;$('#fm').textContent=a?(txt($('#ed').innerHTML).split(a).length-1)+' found':''}
+function rep(){const a=$('#fa').value,b=$('#fb').value;if(!a)return;const w=document.createTreeWalker($('#ed'),4);let n=0,x;while(x=w.nextNode()){if(x.nodeValue.includes(a)){n+=x.nodeValue.split(a).length-1;x.nodeValue=x.nodeValue.split(a).join(b)}}$('#ed').dispatchEvent(new Event('input'));$('#fm').textContent=n+' replaced'}
+function setn(){const s=S.set,o=(v,l)=>`<option value="${v}" ${s.font==v?'selected':''}>${l}</option>`;
+sheet(`<h3>⚙️ Settings</h3><div class=row style="justify-content:flex-start">${[['auto','🌗 Auto'],['light','☀ White'],['sepia','☕ Cream'],['blush','🌸 Blush'],['lilac','🪻 Lilac'],['mint','🌿 Mint'],['dark','☾ Soft dark']].map(([k,l])=>`<button class="${s.theme==k?'on':''}" onclick="S.set.theme='${k}';save();ap();setn()">${l}</button>`).join('')}</div>
+<label>Font</label><select onchange="S.set.font=this.value;save();ap()">${o("Merriweather,Georgia,serif",'Merriweather')}${o("Georgia,serif",'Georgia')}${o("'Times New Roman',serif",'Times')}${o("Inter,system-ui,sans-serif",'Sans (Inter)')}${o("'Courier New',monospace",'Typewriter')}</select>
+<label>Font size</label><input type=range min=14 max=30 value=${s.size} oninput="S.set.size=+this.value;save();ap()">
+<label>Line height</label><input type=range min=1.2 max=2.6 step=.1 value=${s.lh} oninput="S.set.lh=+this.value;save();ap()">
+<label>Paragraph spacing</label><input type=range min=0 max=1.5 step=.25 value=${s.ps} oninput="S.set.ps=+this.value;save();ap()"><label>First-line indent</label><input type=range min=0 max=3 step=.2 value=${s.ind==null?1.6:s.ind} oninput="S.set.ind=+this.value;save();ap()"><label style="margin-top:16px">Account & data</label><button onclick="dl('hydee-writes-backup.json',JSON.stringify(S.items))">💾 Back up all my writing</button><button onclick="inst()">📲 Install this app</button><button onclick="S.set.hp=S.set.hp===0?1:0;save();setn()">📳 Haptic feedback: ${S.set.hp===0?'Off':'On'}</button><button onclick="S.set.w=0;save();cl();R()">🌸 Replay the welcome page</button>${window.so?'<button onclick="out()">🚪 Log out</button>':''}`)}
+function fname(){const [i,t]=cur();return i.title+(i.type=='folder'?' - '+tn(i,t):'')}
+function dl(name,data){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([data]));a.download=name;document.body.appendChild(a);a.click();a.remove()}
+function expo(){sheet('<h3>Export and share</h3><button onclick="epub(cur()[0])">Download as ePub (e-book)</button><button onclick="docx(cur()[0])">Download as Word (.docx)</button><button onclick="ex(\'txt\')">Download as .txt</button><button onclick="ex(\'md\')">Download as .md</button><button onclick="ex(\'html\')">Download as .html (opens in Word)</button><button onclick="dl(\'hydee-writes-backup.json\',JSON.stringify(S))">Back up all my data (.json)</button><button onclick="snd(cur()[0])">Send as ePub…</button>')}
+function ex(k){const [i,t]=cur(),h=t.c||'';cl();dl(fname()+'.'+k,k=='html'?'<!DOCTYPE html><meta charset=utf-8><body style="font:12pt Georgia">'+h:txt(h))}
+function shr(){const [i,t]=cur();cl();if(navigator.share)navigator.share({title:fname(),text:txt(t.c)}).catch(()=>{});else navigator.clipboard&&navigator.clipboard.writeText(txt(t.c)).then(()=>alert('Copied to clipboard'))}
+function login(){$('#app').innerHTML='<main style="max-width:380px;margin-top:8vh;text-align:center"><h1 style="font-size:32px;margin-bottom:6px;flex:none">✍️ Hydee writes</h1><p style="color:var(--mut)">Free writing, no stress. Your work is saved and synced.</p><button class=p onclick="gs()" style="width:100%;padding:13px;margin:14px 0">Continue with Google</button><div style="color:var(--mut);margin:8px">or use your email</div><input type=text id=em placeholder="Email" autocomplete=email><input type=password id=pw placeholder="Password (6+ characters)" autocomplete=current-password><div class=row><button onclick="es(0)">Sign in</button><button class=p onclick="es(1)">Create account</button></div><p id=er style="color:#b3261c"></p></main>'}
+function out(){sheet('<h3>Sign out?</h3><p style="color:var(--mut)">Your writing stays safe in your account.</p><div class=row><button onclick="cl()">Cancel</button><button class=p onclick="cl();so()">Sign out</button></div>')}
+if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
+
+const ai=k=>{const W=k=='j'?[14,14,14,14]:[14,9,14,6];return '<svg width=16 height=16 viewBox="0 0 20 20">'+W.map((w,y)=>`<rect x=${k=='c'?(20-w)/2:k=='r'?17-w:3} y=${3+y*4} width=${w} height=2 rx=1 fill=currentColor />`).join('')+'</svg>'};
+function welcome(){$('#app').innerHTML=`<main style="max-width:420px;text-align:center;padding-top:12vh"><div style="font-size:54px">🌸</div><h1 style="font-size:46px;flex:none;margin:8px 0">Dear writer,</h1><p style="font-family:'Playfair Display',Georgia,serif;font-style:italic;font-size:19px;line-height:1.6">welcome to your quiet little corner.<br>No pressure. No subscription.<br>Just you and your words.</p><p style="color:var(--mut);line-height:1.6">Your work saves itself as you type, and everything you write stays yours.</p><button class=p onclick="S.set.w=1;save();R()" style="padding:14px 34px;border-radius:30px;font-size:17px;margin-top:18px">Begin writing ✨</button></main>`}
+let lpT,lpF;function lpb(){document.querySelectorAll('.cd[data-id]').forEach(c=>{let sx=0,sy=0;c.addEventListener('pointerdown',e=>{sx=e.clientX;sy=e.clientY;lpF=0;clearTimeout(lpT);lpT=setTimeout(()=>{lpF=1;menu(c.dataset.id)},500)});c.addEventListener('pointermove',e=>{if(Math.abs(e.clientX-sx)+Math.abs(e.clientY-sy)>12)clearTimeout(lpT)});['pointerup','pointerleave','pointercancel'].forEach(k=>c.addEventListener(k,()=>clearTimeout(lpT)));c.addEventListener('contextmenu',e=>e.preventDefault());c.addEventListener('click',e=>{if(lpF){e.stopImmediatePropagation();e.preventDefault();lpF=0}},true)})}
+function act(k,id){const i=get(id);cl();
+if(k=='pin'){i.pin=!i.pin;lg(i,i.pin?'Pinned':'Unpinned');save();R()}
+else if(k=='add'){const t={id:uid(),t:'',c:''};i.tabs.push(t);lg(i,'Added a chapter');save();nav={v:'edit',id,tab:t.id};R()}
+else if(k=='doc')docx(i)
+else if(k=='epub')epub(i)
+else if(k=='snd')snd(i)
+else if(k=='off')sheet('<h3>📶 Available offline</h3><p style="line-height:1.6">Good news: everything you write is saved on this device first, so it is already available offline. It syncs to your other devices when you are back online.</p><div class=row><button class=p onclick="cl()">Lovely</button></div>')
+else if(k=='rn')ask('Rename',i.title,n=>{i.title=n;i.up=Date.now();lg(i,'Renamed to “'+n+'”');save();R()})
+else if(k=='det')det(id)
+else if(k=='act')acv(id)
+else if(k=='dup'){const c=JSON.parse(JSON.stringify(i));c.id=uid();c.title='Copy of '+i.title;c.pin=false;c.up=c.cr=Date.now();c.log=[{at:Date.now(),e:'Duplicated from '+i.title}];if(c.tabs)c.tabs.forEach(t=>t.id=uid());S.items.push(c);save();R()}
+else if(k=='cvr'){cvId=id;$('#cov').click()}
+else if(k=='rcv'){delete i.cover;save();R()}
+else if(k=='dl2'){i.del=Date.now();save();R()}}
+let cvId;$('#cov').onchange=e=>{const f=e.target.files[0];e.target.value='';if(!f)return;const im=new Image(),u=URL.createObjectURL(f);im.onload=()=>{const r=Math.min(1,480/im.width),c=document.createElement('canvas');c.width=im.width*r;c.height=im.height*r;c.getContext('2d').drawImage(im,0,0,c.width,c.height);const i=get(cvId);i.cover=c.toDataURL('image/jpeg',.7);i.up=Date.now();save();URL.revokeObjectURL(u);R()};im.src=u};
+let hr;function hd(){const s=getSelection();hr=s.rangeCount?s.getRangeAt(0).cloneRange():null;sheet('<h3>Text style</h3>'+[['h1','Title'],['h2','Heading'],['h3','Subheading'],['p','Normal text']].map(([k,l])=>`<button onclick="fb('${k}')">${l}</button>`).join(''))}
+function fb(k){cl();const e=$('#ed');e.focus();if(hr){const s=getSelection();s.removeAllRanges();s.addRange(hr)}document.execCommand('formatBlock',false,'<'+k+'>');e.dispatchEvent(new Event('input'))}
+let cr,cc;function cmt(){const s=getSelection();if(!s.rangeCount||s.isCollapsed||!$('#ed').contains(s.anchorNode))return sheet('<h3>💬 Comments</h3><p style="color:var(--mut)">Select the words you want to comment on first, then tap 💬 again.</p><div class=row><button class=p onclick="cl()">Got it</button></div>');cr=s.getRangeAt(0).cloneRange();ask('Add a comment','',n=>{const sp=document.createElement('span');sp.className='cm';sp.dataset.c=n;try{cr.surroundContents(sp)}catch(e){sp.appendChild(cr.extractContents());cr.insertNode(sp)}$('#ed').dispatchEvent(new Event('input'))})}
+function cmv(c){cc=c;sheet('<h3>💬 Comment</h3><p style="margin:0 0 12px;line-height:1.5">'+esc(c.dataset.c)+'</p><div class=row><button onclick="cl()">Close</button><button class=p onclick="cmd()">Delete</button></div>')}
+function cmd(){cl();if(cc){cc.replaceWith(...cc.childNodes);$('#ed').dispatchEvent(new Event('input'))}}
+
+const ctt=t=>/^Chapter \d+$/.test(t.t)?'':t.t,tn=(i,t)=>'Chapter '+(i.tabs.indexOf(t)+1)+(ctt(t)?' · '+ctt(t):'');
+function keep(){const d=$('.desk');if(!d)return;const s=getSelection();if(!s.rangeCount)return;const r=s.getRangeAt(0).cloneRange();r.collapse(false);let b=r.getBoundingClientRect().bottom;if(!b){const x=s.anchorNode,e=x&&(x.nodeType==1?x:x.parentElement);if(e)b=e.getBoundingClientRect().bottom}const lim=d.getBoundingClientRect().bottom-30;if(b>lim)d.scrollBy(0,b-lim)}
+function drw(){const [i]=cur(),f=i.type=='folder',sw=o=>`<span class="sw ${o?'on2':''}"><i></i></span>`,L=[['View in light theme',`S.set.theme=S.set.theme=='light'?'dark':'light';save();ap();drw()`,sw(S.set.theme=='light')],f?['Document tabs','cl();tabs()','›']:0,['Document outline','outl()','›'],['Find and replace','cl();fnd()','›'],['Word count & goals','wcs()','›'],['Version history','snp()','›'],['Page setup','cl();setn()','›'],['Details',`det('${i.id}')`,'›'],['Share and export','expo()','›'],['Help and feedback','hlp()','›'],['Available offline',`act('off','${i.id}')`,sw(1)],['Star file','i2()',sw(i.pin)]].filter(Boolean);
+sheet(`<h3>${esc(i.title)}</h3>`+L.map(([l,a,r])=>`<button class=dr onclick="${a}"><span>${l}</span>${r}</button>`).join(''));$('#sh').className='side'}
+function i2(){const [i]=cur();i.pin=!i.pin;lg(i,i.pin?'Pinned':'Unpinned');save();drw()}
+
+matchMedia('(prefers-color-scheme:dark)').addEventListener('change',()=>{if(S.set.theme=='auto')ap()});
+let ip;addEventListener('beforeinstallprompt',e=>{e.preventDefault();ip=e});
+function inst(){if(ip){ip.prompt();ip=null}else sheet('<h3>📲 Install Hydee writes</h3><p style="line-height:1.7"><b>iPhone / iPad:</b> open in Safari, tap Share, then <b>Add to Home Screen</b>.<br><b>Android:</b> tap ⋮ then <b>Install app</b>.<br><b>Computer:</b> click the install icon in the address bar of Chrome or Edge.</p><div class=row><button class=p onclick="cl()">Got it</button></div>')}
+function gl(){const [i,t]=cur();cl();ask('Word goal for this '+(i.type=='folder'?'chapter':'piece'),t.goal||'',v=>{const n=parseInt(v);t.goal=n>0?n:0;save();wcs()})}
+let SN={};try{SN=JSON.parse(localStorage.getItem('hw_snaps')||'{}')}catch(e){}
+const sk=()=>{const [i,t]=cur();return i.type=='folder'?i.id+':'+t.id:i.id};
+function mkSnap(force){const [i,t]=cur(),k=sk(),a=SN[k]=SN[k]||[],l=a[a.length-1];if(!txt(t.c).trim())return;if(l&&(l.c===t.c||(!force&&Date.now()-l.at<6*36e5)))return;a.push({at:Date.now(),c:t.c});while(a.length>6)a.shift();try{localStorage.setItem('hw_snaps',JSON.stringify(SN))}catch(e){}}
+function snp(){const a=(SN[sk()]||[]).slice().reverse(),w=h=>{const x=txt(h).trim();return x?x.split(/\s+/).length:0};
+sheet(`<h3>🕰️ Version history</h3><p style="color:var(--mut);margin:0 0 8px;font-size:14px">Snapshots are kept on this device (the last 6).</p><button class=p style="text-align:center" onclick="mkSnap(1);snp()">📸 Save a snapshot now</button>${a.map((s,x)=>`<div class=st style="justify-content:space-between"><span>${new Date(s.at).toLocaleString([],{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})} · ${w(s.c)} words</span><button onclick="rst(${a.length-1-x})">Restore</button></div>`).join('')||'<p class=em style="margin:20px 0">No snapshots yet.</p>'}`)}
+function rst(x){const [i,t]=cur(),s=(SN[sk()]||[])[x];if(!s)return;const c=s.c;mkSnap(1);t.c=c;i.up=Date.now();save();cl();R()}
+function dd(){const L=$('#tl');let d=null;L.querySelectorAll('.hd2').forEach(h=>{h.onpointerdown=e=>{e.preventDefault();d=h.parentElement;d.style.opacity='.55';h.setPointerCapture(e.pointerId)};h.onpointermove=e=>{if(!d)return;const o=document.elementFromPoint(e.clientX,e.clientY),r=o&&o.closest('#tl .tb');if(r&&r!==d){const b=r.getBoundingClientRect();L.insertBefore(d,e.clientY<b.top+b.height/2?r:r.nextSibling)}};const end=()=>{if(!d)return;d.style.opacity='';d=null;const [i]=cur(),ids=[...L.children].map(x=>x.dataset.id);i.tabs=ids.map(id=>i.tabs.find(t=>t.id==id));i.up=Date.now();save();R();tabs()};h.onpointerup=end;h.onpointercancel=end})}
+
+function lg(i,e){(i.log=i.log||[]).push({at:Date.now(),e});if(i.log.length>20)i.log.shift()}
+function cleanHTML(h){const d=document.createElement('div');d.innerHTML=h;d.querySelectorAll('script,style,meta,link,title').forEach(x=>x.remove());
+const mk=(n,f)=>{const e=document.createElement(n);e.appendChild(f);return e},go=n=>{[...n.childNodes].forEach(c=>{if(c.nodeType==3)return;if(c.nodeType!=1){c.remove();return}go(c);const st=(c.getAttribute('style')||'').toLowerCase(),T=c.tagName,it=/font-style:\s*italic/.test(st),bd=/font-weight:\s*(bold|[6-9]00)/.test(st),ul=/text-decoration[^;]*underline/.test(st),al=(st.match(/text-align:\s*(center|right|justify)/)||[])[1],f=document.createDocumentFragment();[...c.childNodes].forEach(x=>f.appendChild(x));
+if(/^(P|DIV|H1|H2|H3|LI|BLOCKQUOTE)$/.test(T)){const e=mk(T=='DIV'?'p':T.toLowerCase(),f);if(al)e.style.textAlign=al;c.replaceWith(e)}
+else if(/^(UL|OL|BR|SUB|SUP|S|STRIKE)$/.test(T))c.replaceWith(mk(T.toLowerCase(),f));
+else{let r=f;if(T=='I'||T=='EM'||it)r=mk('i',r);if(((T=='B'||T=='STRONG')&&!/font-weight:\s*(normal|[1-4]00)/.test(st))||bd)r=mk('b',r);if(T=='U'||ul)r=mk('u',r);c.replaceWith(r)}})};go(d);return d.innerHTML}
+const xe=s=>s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+const crcT=(()=>{const t=[];for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)c=c&1?0xEDB88320^(c>>>1):c>>>1;t[n]=c>>>0}return t})(),crc=u=>{let c=-1;for(const b of u)c=crcT[(c^b)&255]^(c>>>8);return(c^-1)>>>0};
+function zipf(files,ty){const E=new TextEncoder(),out=[],cen=[];let off=0;for(const[n,s]of files){const nm=E.encode(n),d=s instanceof Uint8Array?s:E.encode(s),c=crc(d),h=new DataView(new ArrayBuffer(30)),g=new DataView(new ArrayBuffer(46));
+h.setUint32(0,0x04034b50,true);h.setUint16(4,20,true);h.setUint16(6,0x0800,true);h.setUint16(12,0x21,true);h.setUint32(14,c,true);h.setUint32(18,d.length,true);h.setUint32(22,d.length,true);h.setUint16(26,nm.length,true);
+g.setUint32(0,0x02014b50,true);g.setUint16(4,20,true);g.setUint16(6,20,true);g.setUint16(8,0x0800,true);g.setUint16(14,0x21,true);g.setUint32(16,c,true);g.setUint32(20,d.length,true);g.setUint32(24,d.length,true);g.setUint16(28,nm.length,true);g.setUint32(42,off,true);
+out.push(new Uint8Array(h.buffer),nm,d);cen.push(new Uint8Array(g.buffer),nm);off+=30+nm.length+d.length}
+let cs=0;cen.forEach(x=>cs+=x.length);const e=new DataView(new ArrayBuffer(22));e.setUint32(0,0x06054b50,true);e.setUint16(8,files.length,true);e.setUint16(10,files.length,true);e.setUint32(12,cs,true);e.setUint32(16,off,true);
+return new Blob([...out,...cen,new Uint8Array(e.buffer)],{type:ty||'application/vnd.openxmlformats-officedocument.wordprocessingml.document'})}
+function rn(n,f){let o='';n.childNodes.forEach(c=>{if(c.nodeType==3)o+=`<w:r><w:rPr>${f.b?'<w:b/>':''}${f.i?'<w:i/>':''}${f.u?'<w:u w:val="single"/>':''}${f.z?`<w:sz w:val="${f.z}"/>`:''}</w:rPr><w:t xml:space="preserve">${xe(c.nodeValue)}</w:t></w:r>`;else if(c.nodeType==1){const T=c.tagName,g={...f};if(T=='B'||T=='STRONG')g.b=1;if(T=='I'||T=='EM')g.i=1;if(T=='U')g.u=1;o+=T=='BR'?'<w:r><w:br/></w:r>':rn(c,g)}});return o}
+function dxp(h){const d=document.createElement('div');d.innerHTML=h;let o='';[...d.childNodes].forEach(c=>{if(c.nodeType==3){if(c.nodeValue.trim())o+=`<w:p><w:pPr><w:ind w:firstLine="720"/></w:pPr>${rn({childNodes:[c]},{})}</w:p>`;return}const T=c.tagName,hh=/^H[1-3]$/.test(T),al=c.style&&c.style.textAlign,jc=hh?'center':al=='center'?'center':al=='right'?'right':al=='justify'?'both':'';o+=`<w:p><w:pPr>${hh?'':'<w:ind w:firstLine="720"/>'}${jc?`<w:jc w:val="${jc}"/>`:''}</w:pPr>${rn(c,hh?{b:1,z:T=='H1'?40:T=='H2'?32:28}:{})}</w:p>`});return o}
+function docxBlob(i){const f=i.type=='folder';let b='';(f?i.tabs:[i]).forEach((t,k)=>{if(k)b+='<w:p><w:r><w:br w:type="page"/></w:r></w:p>';const tt=f?ctt(t):i.title;if(f)b+=`<w:p><w:pPr><w:jc w:val="center"/></w:pPr><w:r><w:t>Chapter ${k+1}</w:t></w:r></w:p>`;if(tt)b+=`<w:p><w:pPr><w:jc w:val="center"/></w:pPr><w:r><w:rPr><w:b/><w:sz w:val="36"/></w:rPr><w:t>${xe(tt)}</w:t></w:r></w:p>`;b+=dxp(t.c||'')});
+return zipf([['[Content_Types].xml','<?xml version="1.0" encoding="UTF-8"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/></Types>'],['_rels/.rels','<?xml version="1.0" encoding="UTF-8"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>'],['word/document.xml','<?xml version="1.0" encoding="UTF-8"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>'+b+'</w:body></w:document>']])}
+function docx(i){dl(i.title+'.docx',docxBlob(i))}
+function wcs(){const [i,t]=cur(),f=i.type=='folder',w=h=>{const x=txt(h).trim();return x?x.split(/\s+/).length:0},cw=w(t.c),tw=f?i.tabs.reduce((a,x)=>a+w(x.c),0):cw,ch=txt(t.c).replace(/\s/g,'').length;
+sheet(`<h3>📊 Word count</h3><div class=st><b>${cw}</b><span>words in this ${f?'chapter':'piece'}</span></div>${f?`<div class=st><b>${tw}</b><span>words in the whole folder</span></div>`:''}<div class=st><b>${ch}</b><span>characters</span></div><div class=st><b>~${Math.max(1,Math.round(tw/230))} min</b><span>to read it all</span></div>${t.goal?`<div class=gl><div style="width:${Math.min(100,Math.round(cw/t.goal*100))}%"></div></div><p class=gt>${cw>=t.goal?'🎉 You reached your goal!':cw+' of '+t.goal+' words'}</p>`:''}<button onclick="gl()">🎯 ${t.goal?'Change your':'Set a'} word goal</button>`)}
+function det(id){const i=get(id),w=h=>{const x=txt(h).trim();return x?x.split(/\s+/).length:0},ts=i.type=='folder'?i.tabs:[i],wd=ts.reduce((a,x)=>a+w(x.c),0),d=x=>x?new Date(x).toLocaleString([],{dateStyle:'medium',timeStyle:'short'}):'—';
+sheet(`<h3>ℹ️ Details</h3>${[['Name',esc(i.title)],['Type',i.type=='folder'?'Folder · '+i.tabs.length+' chapters':'Piece'],['Words',wd],['Created',d(i.cr||i.up)],['Last edited',d(i.up)]].map(([a,b])=>`<div class=st style="justify-content:space-between"><span>${a}</span><b style="font-size:16px">${b}</b></div>`).join('')}<div class=row><button class=p onclick="cl()">Close</button></div>`)}
+function acv(id){const i=get(id);sheet(`<h3>🕘 Activity</h3>${(i.log||[]).slice().reverse().map(l=>`<div class=st style="justify-content:space-between"><span>${esc(l.e)}</span><span>${new Date(l.at).toLocaleString([],{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})}</span></div>`).join('')||'<p style="color:var(--mut)">Nothing yet. Your changes will show up here.</p>'}<div class=row><button class=p onclick="cl()">Close</button></div>`)}
+function hlp(){sheet('<h3>💬 Help & feedback</h3><p style="line-height:1.7">• Hold a file or folder to see its options.<br>• Tap Aa ▾ for headings, or type #, ##, ### + Space.<br>• Your writing saves itself automatically.</p><div class=row><button class=p onclick="cl()">Got it</button></div>')}
+function outl(){const hs=[...document.querySelectorAll('#ed h1,#ed h2,#ed h3')];window.ol=hs;sheet('<h3>🧭 Outline</h3>'+(hs.map((h,k)=>`<button style="padding-left:${10+(h.tagName[1]-1)*14}px" onclick="cl();ol[${k}].scrollIntoView({block:'start'})">${esc(h.textContent)||'(untitled)'}</button>`).join('')||'<p style="color:var(--mut)">Add headings with Aa ▾ and they will show up here.</p>'))}
+async function snd(i){const b=epubBlob(i),n=i.title+'.epub';try{const f=new File([b],n,{type:'application/epub+zip'});if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:i.title});return}}catch(e){if(e.name=='AbortError')return}dl(n,b);sheet('<h3>📚 Your ePub is ready</h3><p style="line-height:1.6">Your phone saved <b>'+xe(n)+'</b>. Open the Files app, find it, and tap Share to send it on WhatsApp or anywhere else.</p><div class=row><button class=p onclick="cl()">Got it</button></div>')}
+function xh(h){const d=document.createElement('div');d.innerHTML=h||'';d.querySelectorAll('.cm').forEach(c=>c.replaceWith(...c.childNodes));d.querySelectorAll('[data-c],[contenteditable]').forEach(e=>{e.removeAttribute('data-c');e.removeAttribute('contenteditable')});if(!d.childNodes.length)return '';return new XMLSerializer().serializeToString(d).replace(/^<div[^>]*>/,'').replace(/<\/div>$/,'')}
+function epubBlob(i){const f=i.type=='folder',ts=f?i.tabs:[i],id='urn:uuid:'+uid()+uid()+uid(),X='<?xml version="1.0" encoding="UTF-8"?>',H='<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops"><head><meta charset="utf-8"/>',cv=i.cover&&i.cover.split(',')[1],lang=/[\uAC00-\uD7A3]/.test(ts.map(t=>t.c).join(''))?'ko':'en',
+nm=ts.map((t,k)=>['c'+(k+1),f?'Chapter '+(k+1)+(ctt(t)?' · '+ctt(t):''):i.title]),
+F=[['mimetype','application/epub+zip'],['META-INF/container.xml',X+'<container version="1.0" xmlns="urn:oasis:names:tc:opendocument:xmlns:container"><rootfiles><rootfile full-path="OEBPS/content.opf" media-type="application/oebps-package+xml"/></rootfiles></container>'],['OEBPS/style.css','body{font-family:serif;line-height:1.5}p{margin:0;text-indent:1.4em}h1,h2,h3{text-align:center;text-indent:0}h1.num{margin-top:3em;font-size:1.3em;font-weight:normal;letter-spacing:.1em}h2.ttl{margin-bottom:2em}']];
+ts.forEach((t,k)=>{const tt=f?ctt(t):i.title;F.push(['OEBPS/c'+(k+1)+'.xhtml',X+H+'<title>'+xe(nm[k][1])+'</title><link rel="stylesheet" type="text/css" href="style.css"/></head><body>'+(f?'<h1 class="num">Chapter '+(k+1)+'</h1>':'')+(tt?'<h2 class="ttl">'+xe(tt)+'</h2>':'')+'<div>'+xh(t.c)+'</div></body></html>'])});
+F.push(['OEBPS/nav.xhtml',X+H+'<title>Contents</title></head><body><nav epub:type="toc" id="toc"><h1>Contents</h1><ol>'+nm.map(([a,b])=>`<li><a href="${a}.xhtml">${xe(b)}</a></li>`).join('')+'</ol></nav></body></html>']);
+F.push(['OEBPS/toc.ncx',X+'<ncx xmlns="http://www.daisy.org/z3986/2005/ncx/" version="2005-1"><head><meta name="dtb:uid" content="'+id+'"/></head><docTitle><text>'+xe(i.title)+'</text></docTitle><navMap>'+nm.map(([a,b],k)=>`<navPoint id="n${k+1}" playOrder="${k+1}"><navLabel><text>${xe(b)}</text></navLabel><content src="${a}.xhtml"/></navPoint>`).join('')+'</navMap></ncx>']);
+if(cv)F.push(['OEBPS/cover.jpg',Uint8Array.from(atob(cv),c=>c.charCodeAt(0))]);
+F.push(['OEBPS/content.opf',X+'<package xmlns="http://www.idpf.org/2007/opf" version="3.0" unique-identifier="uid"><metadata xmlns:dc="http://purl.org/dc/elements/1.1/"><dc:identifier id="uid">'+id+'</dc:identifier><dc:title>'+xe(i.title)+'</dc:title><dc:language>'+lang+'</dc:language><meta property="dcterms:modified">'+new Date().toISOString().slice(0,19)+'Z</meta>'+(cv?'<meta name="cover" content="cover"/>':'')+'</metadata><manifest><item id="nav" href="nav.xhtml" media-type="application/xhtml+xml" properties="nav"/><item id="ncx" href="toc.ncx" media-type="application/x-dtbncx+xml"/><item id="css" href="style.css" media-type="text/css"/>'+(cv?'<item id="cover" href="cover.jpg" media-type="image/jpeg" properties="cover-image"/>':'')+nm.map(([a])=>`<item id="${a}" href="${a}.xhtml" media-type="application/xhtml+xml"/>`).join('')+'</manifest><spine toc="ncx">'+nm.map(([a])=>`<itemref idref="${a}"/>`).join('')+'</spine></package>']);
+return zipf(F,'application/epub+zip')}
+function epub(i){dl(i.title+'.epub',epubBlob(i))}
+function hap(){if(S.set.hp===0)return;try{if(navigator.vibrate){navigator.vibrate(12);return}$('#hxl').click()}catch(e){}}
+document.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('button,.cd,.sw'))hap()},true);
+R();
+</script>
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+import{getAuth,onAuthStateChanged,GoogleAuthProvider,signInWithPopup,signInWithRedirect,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut}from"https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+import{initializeFirestore,persistentLocalCache,persistentMultipleTabManager,collection,doc,setDoc,deleteDoc,onSnapshot}from"https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+
+const app=initializeApp({apiKey:"AIzaSyDynuVvvLChG9wUdbEVAKfpGXiZ6pG0xzY",authDomain:"hydee-writes.firebaseapp.com",projectId:"hydee-writes",storageBucket:"hydee-writes.firebasestorage.app",messagingSenderId:"935060393880",appId:"1:935060393880:web:451d6746a31527e222e5ed"});
+const auth=getAuth(app),db=initializeFirestore(app,{localCache:persistentLocalCache({tabManager:persistentMultipleTabManager()})});
+let L={},unsub=null;
+const msg=e=>({'auth/invalid-credential':'Wrong email or password.','auth/email-already-in-use':'That email already has an account. Try Sign in.','auth/weak-password':'Use a password with at least 6 characters.','auth/invalid-email':'That email looks wrong.','auth/network-request-failed':'No internet connection.'}[e.code]||'Something went wrong. Please try again.');
+const err=e=>{const x=$('#er');if(x)x.textContent=msg(e)};
+window.gs=async()=>{const p=new GoogleAuthProvider();try{await signInWithPopup(auth,p)}catch(e){if(e.code=='auth/popup-blocked')signInWithRedirect(auth,p);else if(e.code!='auth/popup-closed-by-user')err(e)}};
+window.es=async c=>{try{await(c?createUserWithEmailAndPassword:signInWithEmailAndPassword)(auth,$('#em').value.trim(),$('#pw').value)}catch(e){err(e)}};
+window.so=()=>signOut(auth);
+
+const flat=()=>{
+  const m={};
+  S.items.forEach(i=>{
+    if(i.type=='folder'){
+      const{tabs,...r}=i;m[i.id]=r;
+      (tabs||[]).forEach((t,k)=>m[t.id]={...t,type:'chap',parent:i.id,ord:k});
+    }else{
+      m[i.id]=i;
+    }
+  });
+  return m;
+};
+
+window.apply=s=>{
+  const D=s.docs.map(d=>d.data()),C=D.filter(x=>x.type=='chap'),it=D.filter(x=>x.type!='chap');
+  it.forEach(i=>{
+    if(i.type=='folder'){
+      const k=C.filter(c=>c.parent==i.id).sort((a,b)=>a.ord-b.ord).map(({parent,ord,type,...t})=>t);
+      if(k.length)i.tabs=k;
+      else if(!i.tabs||!i.tabs.length)i.tabs=[{id:Math.random().toString(36).slice(2,9),t:'',c:''}];
+    }
+  });
+  const now=Date.now();
+  // Filter out any items in trash older than 30 days
+  S.items=it.filter(i=>!i.del||(now-i.del<30*864e5));
+  L={};
+  const m=flat();
+  Object.keys(m).forEach(k=>L[k]=JSON.stringify(m[k]));
+  s.docs.forEach(d=>{if(!(d.id in L))L[d.id]=JSON.stringify(d.data())});
+};
+
+window.sync=()=>{
+  const u=auth.currentUser;
+  if(!u){
+    if(window.setStatus)window.setStatus('Saved offline');
+    return 0;
+  }
+  const col=collection(db,'users',u.uid,'items'),m=flat();
+  let n=0;
+  const promises=[];
+
+  Object.keys(m).forEach(id=>{
+    const j=JSON.stringify(m[id]);
+    if(L[id]!==j){
+      L[id]=j;n++;
+      promises.push(setDoc(doc(col,id),JSON.parse(j)).catch(()=>{}));
+    }
+  });
+  Object.keys(L).forEach(id=>{
+    if(!m[id]){
+      delete L[id];n++;
+      promises.push(deleteDoc(doc(col,id)).catch(()=>{}));
+    }
+  });
+
+  Promise.all(promises).then(()=>{
+    if(window.setStatus)window.setStatus('Saved');
+  }).catch(()=>{
+    if(window.setStatus)window.setStatus('Offline (local)');
+  });
+  return n;
+};
+
+onAuthStateChanged(auth,u=>{
+  window.U=u;
+  if(unsub)unsub();
+  unsub=null;
+  if(!u){S.items=[];L={};R();return}
+  unsub=onSnapshot(collection(db,'users',u.uid,'items'),s=>{
+    if(nav.v=='edit'){window.late=s;return}
+    if(window.sync())return;
+    window.apply(s);
+    R();
+  },()=>R());
+});
+</script>
+</body></html>
