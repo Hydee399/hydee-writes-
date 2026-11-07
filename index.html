@@ -555,4 +555,71 @@ document.addEventListener('scroll',()=>fbar(),true);
 R();
 })();
 </script>
+<script>
+/* Hydee writes patch 2 */
+(()=>{
+const sv=b=>'url("data:image/svg+xml,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120">'+b+'</svg>')+'")';
+const T=(x,y,r)=>`<g transform="translate(${x} ${y}) rotate(${r})" opacity=".2"><g fill="#8b5a2b"><circle cx="-12" cy="-12" r="5.5"/><circle cx="12" cy="-12" r="5.5"/><circle r="14"/><ellipse cy="26" rx="12" ry="11"/><circle cx="-10" cy="19" r="4.5"/><circle cx="10" cy="19" r="4.5"/></g><ellipse cy="5" rx="6" ry="4.5" fill="#f6ecdc"/><g fill="#3b2a1a"><circle cx="-5" cy="-3" r="1.6"/><circle cx="5" cy="-3" r="1.6"/><circle cy="3" r="1.5"/></g></g>`;
+const F=(x,y,s,c)=>`<g transform="translate(${x} ${y}) scale(${s})" opacity=".22">${[0,72,144,216,288].map(a=>`<ellipse cy="-9" rx="5.5" ry="9" fill="${c}" transform="rotate(${a})"/>`).join('')}<circle r="4" fill="#e7b95c"/></g>`;
+const Lf=(x,y,r,s)=>`<g transform="translate(${x} ${y}) rotate(${r}) scale(${s})" opacity=".22"><path d="M0 -16C11 -6 11 8 0 16C-11 8 -11 -6 0 -16Z" fill="#3f9d7a"/><path d="M0 -12V14" stroke="#f6fffb" stroke-width="1.2"/></g>`;
+const P={sepia:sv(T(32,30,-8)+T(92,90,10)),
+lilac:sv(F(30,32,1,'#8a5cc4')+F(90,84,1.2,'#b48be0')+F(94,24,.6,'#c9a7ee')+F(26,94,.6,'#a57bd6')),
+mint:sv(Lf(30,30,-30,1)+Lf(54,50,40,.8)+Lf(92,88,20,1.1)+Lf(68,102,-50,.7)+Lf(100,28,60,.7)),
+blush:sv('<text x="14" y="40" font-size="24" opacity=".4">🌸</text><text x="70" y="100" font-size="20" opacity=".35">🌸</text><text x="80" y="36" font-size="13" opacity=".35">🌸</text>')};
+const lk=document.createElement('link');lk.rel='stylesheet';lk.href='https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&display=swap';document.head.appendChild(lk);
+const css=document.createElement('style');
+css.textContent=`body{font-family:Quicksand,Nunito,system-ui,sans-serif}
+:root[data-theme=pitch]{--bg:#000;--fg:#fff;--mut:#8e8e93;--card:#0c0c0d;--bd:#262628;--ac:#fff;--hl:#0c0c0d;--desk:#000;--br:#fff}
+:root[data-theme=pitch] .pg{box-shadow:none}:root[data-theme=pitch] .chn{opacity:.9}:root[data-theme=pitch] header{background:#000}
+:root[data-theme=pitch] .fab,:root[data-theme=pitch] .p,:root[data-theme=pitch] .on,:root[data-theme=pitch] .search-row button{background:#fff;color:#000}
+#ed span[style*="background-color"]:not([style*="transparent"]):not([style*="rgba(0, 0, 0, 0)"]){color:#2b2024!important}
+`+Object.keys(P).map(k=>`:root[data-theme=${k}] body,:root[data-theme=${k}] .desk,:root[data-theme=${k}] .bx{background-image:${P[k]};background-size:120px 120px;background-repeat:repeat}`).join('\n');
+document.head.appendChild(css);
+
+/* highlight colors */
+let hr2;const HC=['#fde68a','#fbcfe8','#bbf7d0','#bae6fd','#fed7aa','#e9d5ff','#fecaca'];
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('#ftb button[data-k=hl]');if(!b)return;e.stopPropagation();const s=getSelection();hr2=s.rangeCount?s.getRangeAt(0).cloneRange():null;
+sheet('<h3>🖍 Highlight color</h3><div class=row style="justify-content:flex-start;gap:12px">'+HC.map(c=>`<button onclick="hlc('${c}')" style="width:46px;height:46px;border-radius:50%;background:${c};border:2px solid var(--bd);padding:0"></button>`).join('')+'</div><div class=row style="justify-content:flex-start"><button onclick="hlc(\'transparent\')">✕ Remove highlight</button></div>')},true);
+window.hlc=c=>{cl();const ed=$('#ed');ed.focus();if(hr2){const g=getSelection();g.removeAllRanges();g.addRange(hr2)}document.execCommand('hiliteColor',false,c);ed.dispatchEvent(new Event('input'))};
+
+/* share / save to Files */
+const bodyH=i=>(i.type=='folder'?i.tabs:[i]).map((t,k)=>(i.type=='folder'?'<h2>'+(k?'Chapter '+k:'Prologue')+(t.t?' · '+esc(t.t):'')+'</h2>':'')+(t.c||'')).join('');
+const plain=i=>(i.type=='folder'?i.tabs:[i]).map((t,k)=>(i.type=='folder'?(k?'Chapter '+k:'Prologue')+(t.t?' · '+t.t:'')+'\n\n':'')+txt((t.c||'').replace(/<\/(p|div|h[1-6]|li|blockquote)>|<br\s*\/?>/gi,'$&\n'))).join('\n\n');
+snd=function(i,sv){sheet(`<h3>${sv?'💾 Save to Files':'📤 Send a copy'}</h3><p style="color:var(--mut);margin:0 0 6px;font-size:14px">${sv?'Choose a format, then tap “Save to Files” in the sheet that opens.':'Choose a format. The other person opens it in whatever app they use for that file type.'}</p>`+[['docx','📄 Word document (.docx)'],['epub','📚 ePub book'],['txt','📝 Plain text (.txt)'],['html','🌐 Web page (.html)']].map(([k,l])=>`<button onclick="shf('${i.id}','${k}')">${l}</button>`).join(''))};
+window.shf=async(id,k)=>{cl();const i=get(id);if(!i)return;const n=i.title.replace(/[\/\\:*?"<>|]/g,'-')+'.'+k,b=k=='docx'?docxBlob(i):k=='epub'?epubBlob(i):new Blob([k=='txt'?plain(i):'<!DOCTYPE html><meta charset=utf-8><title>'+esc(i.title)+'</title><body style="font:12pt Georgia;max-width:40em;margin:2em auto"><h1>'+esc(i.title)+'</h1>'+bodyH(i)],{type:k=='txt'?'text/plain':'text/html'}),f=new File([b],n,{type:b.type});
+try{if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:i.title});return}}catch(e){if(e.name=='AbortError')return}dl(n,b)};
+expo=function(){sheet('<h3>Export and share</h3><button onclick="snd(cur()[0],1)">💾 Save to Files (iPhone)</button><button onclick="snd(cur()[0])">📤 Send a copy…</button><button onclick="epub(cur()[0])">Download as ePub</button><button onclick="docx(cur()[0])">Download as Word (.docx)</button><button onclick="window.print()">Download / Print as PDF</button><button onclick="ex(\'txt\')">Download as .txt</button>')};
+
+/* open PDF + EPUB from Files */
+const imp=$('#imp'),old=imp.onchange;
+imp.accept='.txt,.md,.html,.htm,.docx,.epub,.pdf,.json,text/plain,application/epub+zip,application/pdf,application/json';
+function loadPdf(){return window.pdfjsLib?Promise.resolve():new Promise((r,j)=>{const s=document.createElement('script'),u='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/';s.src=u+'pdf.min.js';s.onload=()=>{pdfjsLib.GlobalWorkerOptions.workerSrc=u+'pdf.worker.min.js';r()};s.onerror=j;document.head.appendChild(s)})}
+async function pdf2h(buf){await loadPdf();const d=await pdfjsLib.getDocument({data:buf}).promise;let h='';
+for(let p=1;p<=d.numPages;p++){const c=await(await d.getPage(p)).getTextContent(),L=[];let y=null,ln='';
+c.items.forEach(it=>{const yy=it.transform[5];if(y!==null&&Math.abs(yy-y)>2){L.push({t:ln,g:Math.abs(y-yy)});ln=''}ln+=it.str;y=yy});L.push({t:ln,g:0});
+const gs=L.map(l=>l.g).filter(g=>g>0).sort((a,b)=>a-b),md=gs[gs.length>>1]||0;let pr='';
+L.forEach((l,k)=>{pr+=(pr?' ':'')+l.t.trim();if(l.g>md*1.4||k==L.length-1){if(pr.trim())h+='<p>'+esc(pr.trim())+'</p>';pr=''}})}return h}
+imp.onchange=async function(e){const f=e.target.files[0];if(!f||!(/\.pdf$/i.test(f.name)||f.type=='application/pdf'))return old&&old.call(this,e);e.target.value='';
+sheet('<h3>📕 Importing PDF…</h3><p style="color:var(--mut)">Reading the text. This can take a moment.</p>');
+try{const h=await pdf2h(await f.arrayBuffer());if(!h)throw 0;S.items.push({id:uid(),type:'doc',title:f.name.replace(/\.\w+$/,''),c:h,up:Date.now(),cr:Date.now(),log:[{at:Date.now(),e:'Imported'}]});save();cl();R()}
+catch(x){sheet('<h3>Couldn’t read that PDF</h3><p style="color:var(--mut)">It may be scanned pictures with no text, or you may be offline.</p><div class=row><button class=p onclick="cl()">OK</button></div>')}};
+const am1=addm;addm=function(){am1();const s=$('#sh');s.innerHTML=s.innerHTML.replace('.epub or a .json backup','.epub .pdf or a .json backup')};
+
+/* trash: grid / list */
+window.rsI=id=>{delete get(id).del;save();R()};
+bin=function(){const now=Date.now(),L=S.items.filter(i=>i.del&&now-i.del<30*864e5),g=S.set.binView=='grid';
+$('#app').innerHTML=`<header><button onclick="nav={v:'home'};R()">←</button><h1>Trash & Bin</h1><button onclick="S.set.binView=S.set.binView=='grid'?'list':'grid';save();R()">${g?'☰':'▦'}</button></header><main><p class=em style="margin:0 0 10px">Items are permanently removed after 30 days.</p><div class="${g?'grid':'list'}">${L.map(i=>{const t=i.type=='folder'?(i.tabs[0]||{}).c:i.c;return `<div class=cd style="--c:${col(i.id)}"><div class=pv>${esc(txt(t).slice(0,160))}</div><div class=ct><span>${esc(i.title)} · ${Math.max(0,30-Math.floor((now-i.del)/864e5))}d left</span></div><div class=row style="margin:0 8px 8px"><button onclick="rsI('${i.id}')">Restore</button><button onclick="purgeBin('${i.id}')">Delete</button></div></div>`}).join('')||'<p class=em style="grid-column:1/-1">Bin is empty.</p>'}</div></main>`};
+
+/* account: sign in on any device, work follows you */
+window.gin=()=>{login();$('#app main').insertAdjacentHTML('afterbegin','<button onclick="R()" style="margin-bottom:8px">← Back to my writing</button>')};
+window.acct=()=>{const u=window.U;sheet(u?'<h3>☁️ Your account</h3><p style="line-height:1.6">Signed in as <b>'+esc(u.email||'your account')+'</b>.<br>Your writing saves to this account. Sign in with it on any other device and your files appear there.</p><div class=row><button onclick="cl();window.sync();setStatus(\'Synced\')">Sync now</button><button class=p onclick="cl();out()">Sign out</button></div>':'<h3>👤 Not signed in</h3><p style="line-height:1.6">Your writing is saved on this device. Sign in to also save it to your account and open it on any device.</p><div class=row><button onclick="cl()">Later</button><button class=p onclick="cl();gin()">Sign in</button></div>')};
+const h2=home;home=function(){h2();const hd=$('#app header');
+if(hd){const bs=hd.querySelectorAll('button');bs[bs.length-1].insertAdjacentHTML('beforebegin',`<button onclick="acct()" title="Account">${window.U?'☁️':'👤'}</button>`)}
+if(window.U===null&&!S.set.nb&&$('#ptr'))$('#ptr').insertAdjacentHTML('beforebegin','<div style="margin:0 14px 10px;padding:12px 14px;background:var(--hl);border-radius:16px;display:flex;align-items:center;gap:8px"><span style="flex:1;font-size:14px">☁️ Sign in to keep your writing on all your devices.</span><button class=p onclick="gin()">Sign in</button><button onclick="S.set.nb=1;save();R()">Not now</button></div>')};
+const sm1=sideMenu;sideMenu=function(){sm1();document.querySelectorAll('#sh button').forEach(b=>{if(b.textContent.includes('Sign in to sync'))b.setAttribute('onclick','cl();gin()')})};
+
+R();
+})();
+</script>
+
 
