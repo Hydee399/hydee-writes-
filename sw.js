@@ -1,0 +1,6 @@
+const C='hw-v1',PRE=['./','./index.html','./manifest.webmanifest','https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js','https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js','https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js'],NP=['https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js','https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js'];
+self.addEventListener('install',e=>{e.waitUntil(caches.open(C).then(c=>Promise.allSettled([...PRE.map(u=>c.add(u)),...NP.map(u=>fetch(new Request(u,{mode:'no-cors'})).then(r=>c.put(u,r)))])).then(()=>self.skipWaiting()))});
+self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x!=C).map(x=>caches.delete(x)))).then(()=>self.clients.claim())));
+self.addEventListener('fetch',e=>{const r=e.request,u=new URL(r.url);if(r.method!='GET'||!/^https?:$/.test(u.protocol))return;
+const ok=u.origin==location.origin||/^(fonts\.googleapis\.com|fonts\.gstatic\.com|www\.gstatic\.com|cdnjs\.cloudflare\.com)$/.test(u.hostname);if(!ok)return;
+e.respondWith(fetch(r).then(x=>{if(x&&(x.ok||x.type=='opaque')){const k=x.clone();caches.open(C).then(c=>c.put(r,k))}return x}).catch(()=>caches.match(r,{ignoreSearch:true}).then(m=>m||(r.mode=='navigate'?caches.match('./index.html'):Response.error()))))});
