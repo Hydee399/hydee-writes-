@@ -733,3 +733,15 @@ const b2=$('#go');if(b2){b2.disabled=false;b2.textContent='Continue'}};
 R();
 })();
 </script>
+<script>
+/* Hydee writes patch 4: app icon choices in Settings */
+(()=>{
+const IC=[['h','Bubble H','icon-512.png'],['notebook','Notebook','icon-notebook.png'],['hc','HC monogram','icon-hc.png']];
+const ai2=()=>{const f=(IC.find(x=>x[0]==(S.set.icon||'h'))||IC[0])[2];
+for(const rel of ['apple-touch-icon','icon']){let l=document.querySelector('link[rel="'+rel+'"]');if(!l){l=document.createElement('link');l.rel=rel;document.head.appendChild(l)}l.href=f}};
+window.pick=k=>{S.set.icon=k;save();ai2();setn()};
+const sn4=setn;setn=function(){sn4();const b=$('#sh .bx');if(!b)return;
+b.insertAdjacentHTML('beforeend','<label style="margin-top:16px">App icon</label><div class=row style="justify-content:flex-start;gap:12px">'+IC.map(([k,n,f])=>`<button onclick="pick('${k}')" style="flex-direction:column;gap:4px;padding:6px;border-radius:16px;${(S.set.icon||'h')==k?'outline:3px solid var(--ac)':''}"><img src="${f}" width=64 height=64 style="border-radius:14px"><span style="font-size:12px">${n}</span></button>`).join('')+'</div><p style="color:var(--mut);font-size:13px;line-height:1.5">A website can’t swap its Home Screen icon by itself on iPhone or iPad. After choosing, delete the old icon, then use Share → Add to Home Screen to get the new one.</p>')};
+ai2();
+})();
+</script>
