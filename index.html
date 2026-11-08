@@ -621,5 +621,115 @@ const sm1=sideMenu;sideMenu=function(){sm1();document.querySelectorAll('#sh butt
 R();
 })();
 </script>
+<script>
+/* Hydee writes patch 3: reader, story Bible, easy sign-in */
+(()=>{
+const imp=$('#imp'),prev=imp.onchange,TD=new TextDecoder();
+const css=document.createElement('style');
+css.textContent=`#rd{position:fixed;left:0;right:0;top:calc(54px + env(safe-area-inset-top,0px));bottom:calc(52px + env(safe-area-inset-bottom,0px));overflow:auto;-webkit-overflow-scrolling:touch;background:var(--desk)}
+#rt{max-width:720px;margin:0 auto;padding:22px 22px 80px;background:var(--bg);min-height:100%;font-family:var(--ef);font-size:var(--rs,18px);line-height:1.7;text-align:justify}
+#rt img{max-width:100%;height:auto;display:block;margin:12px auto}#rt p{margin:0 0 .8em;text-indent:1.4em}#rt h1,#rt h2,#rt h3{text-align:center;text-indent:0;color:var(--br)}
+.rb{position:fixed;left:0;right:0;bottom:0;display:flex;justify-content:space-between;align-items:center;gap:4px;padding:6px 10px calc(6px + env(safe-area-inset-bottom,0px));background:var(--hl);border-top:1px solid var(--bd);z-index:6}
+#app main input[type=text],#app main input[type=password]{width:100%;padding:12px 14px;margin:6px 0;border:1px solid var(--bd);border-radius:12px;background:var(--card);color:var(--fg);font:inherit}`;
+document.head.appendChild(css);
 
+/* local book storage (works offline) */
+const idb=()=>new Promise((r,j)=>{const q=indexedDB.open('hw-books',1);q.onupgradeneeded=()=>q.result.createObjectStore('b');q.onsuccess=()=>r(q.result);q.onerror=j});
+const bput=async(k,v)=>{const d=await idb();return new Promise((r,j)=>{const t=d.transaction('b','readwrite');t.objectStore('b').put(v,k);t.oncomplete=r;t.onerror=j})};
+const bget=async k=>{const d=await idb();return new Promise((r,j)=>{const q=d.transaction('b').objectStore('b').get(k);q.onsuccess=()=>r(q.result);q.onerror=j})};
+const bdel=async k=>{const d=await idb();return new Promise((r,j)=>{const t=d.transaction('b','readwrite');t.objectStore('b').delete(k);t.oncomplete=r;t.onerror=j})};
+async function unz(buf){const v=new DataView(buf),u=new Uint8Array(buf),F={};let e=buf.byteLength-22;while(e>=0&&v.getUint32(e,true)!=0x06054b50)e--;const n=v.getUint16(e+10,true);let p=v.getUint32(e+16,true);
+for(let k=0;k<n;k++){const m=v.getUint16(p+10,true),cs=v.getUint32(p+20,true),nl=v.getUint16(p+28,true),xl=v.getUint16(p+30,true),cm=v.getUint16(p+32,true),o=v.getUint32(p+42,true),nm=TD.decode(u.subarray(p+46,p+46+nl)),ho=o+30+v.getUint16(o+26,true)+v.getUint16(o+28,true),raw=u.subarray(ho,ho+cs);
+F[nm]=async()=>m==0?raw:new Uint8Array(await new Response(new Blob([raw]).stream().pipeThrough(new DecompressionStream('deflate-raw'))).arrayBuffer());p+=46+nl+xl+cm}return F}
+function loadPdf(){return window.pdfjsLib?Promise.resolve():new Promise((r,j)=>{const s=document.createElement('script'),u='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/';s.src=u+'pdf.min.js';s.onload=()=>{pdfjsLib.GlobalWorkerOptions.workerSrc=u+'pdf.worker.min.js';r()};s.onerror=j;document.head.appendChild(s)})}
 
+/* import PDF / EPUB as books to READ */
+imp.onchange=async function(e){const f=e.target.files[0],x=f&&f.name.split('.').pop().toLowerCase();
+if(!f||(x!='pdf'&&x!='epub'&&f.type!='application/pdf'&&f.type!='application/epub+zip'))return prev&&prev.call(this,e);e.target.value='';
+const fmt=(x=='epub'||f.type=='application/epub+zip')?'epub':'pdf';sheet('<h3>📖 Adding to your library…</h3>');
+try{const buf=await f.arrayBuffer();let title=f.name.replace(/\.\w+$/,'');
+if(fmt=='epub'){try{const z=await unz(buf),opf=TD.decode(await z['META-INF/container.xml']()).match(/full-path="([^"]+)"/)[1],t=new DOMParser().parseFromString(TD.decode(await z[opf]()),'application/xml').getElementsByTagName('dc:title')[0];if(t&&t.textContent.trim())title=t.textContent.trim()}catch(_){}}
+const id=uid();await bput(id,buf);S.items.push({id,type:'book',fmt,title,up:Date.now(),cr:Date.now(),log:[{at:Date.now(),e:'Added to library'}]});save();cl();R()}
+catch(_){sheet('<h3>Couldn’t add that file</h3><div class=row><button class=p onclick="cl()">OK</button></div>')}};
+const pb=purgeBin;purgeBin=function(id){const i=get(id);if(i&&i.type=='book')bdel(id).catch(()=>{});pb(id)};
+
+/* reader */
+let RD=null;
+window.rsz=d=>{S.set.rsz=Math.min(30,Math.max(13,(S.set.rsz||18)+d*2));document.documentElement.style.setProperty('--rs',S.set.rsz+'px');save()};
+async function read(){const i=get(nav.id);
+$('#app').innerHTML=`<header><button onclick="nav={v:'home'};R()">←</button><h1 style="font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(i.title)}</h1></header><div id=rd><div id=rt><p class=em style="text-indent:0;text-align:center">Opening…</p></div></div><div class=rb id=rbar></div>`;
+let buf;try{buf=await bget(i.id)}catch(_){}
+if(nav.v!='read'||nav.id!=i.id)return;
+if(!buf){$('#rt').innerHTML='<p class=em style="text-indent:0;text-align:center">This book is saved on the device where you added it. Add the file here too (+ → Bring in a file) to read it on this device.</p>';return}
+try{i.fmt=='pdf'?await openPdf(i,buf):await openEpub(i,buf)}catch(_){$('#rt').innerHTML='<p class=em style="text-indent:0;text-align:center">Couldn’t open this file.</p>'}}
+async function openPdf(i,buf){await loadPdf();const d=await pdfjsLib.getDocument({data:buf}).promise,box=$('#rd'),z=i.z||1,v1=(await d.getPage(1)).getViewport({scale:1}),w=Math.round(box.clientWidth*z),h=Math.round(w*v1.height/v1.width),dpr=Math.min(devicePixelRatio||1,2),t=$('#rt'),cv=[];
+t.style.cssText='padding:8px 0;background:none;max-width:none;min-height:0;width:'+w+'px;margin:0 auto';t.innerHTML='';
+for(let p=1;p<=d.numPages;p++){const c=document.createElement('canvas');c.dataset.p=p;c.style.cssText='display:block;margin:0 0 8px;width:'+w+'px;height:'+h+'px;background:#fff';t.appendChild(c);cv.push(c)}
+const io=new IntersectionObserver(es=>es.forEach(async e=>{const c=e.target;if(!e.isIntersecting||c.dataset.d)return;c.dataset.d=1;const pg=await d.getPage(+c.dataset.p),vp=pg.getViewport({scale:w/pg.getViewport({scale:1}).width*dpr});c.width=vp.width;c.height=vp.height;await pg.render({canvasContext:c.getContext('2d'),viewport:vp}).promise}),{root:box,rootMargin:'800px'});
+cv.forEach(c=>io.observe(c));
+$('#rbar').innerHTML='<span id=pgn style="font-size:14px"></span><span><button onclick="pz(-.25)">－</button><button onclick="pz(.25)">＋</button></span>';
+let tm;const upd=()=>{const k=Math.min(d.numPages,Math.max(1,Math.floor(box.scrollTop/(h+8))+1));$('#pgn').textContent='Page '+k+' / '+d.numPages;clearTimeout(tm);tm=setTimeout(()=>{const it=get(i.id);if(it&&it.pg!=k){it.pg=k;save()}},1500)};
+box.onscroll=upd;box.scrollTop=((i.pg||1)-1)*(h+8);upd()}
+window.pz=dz=>{const i=get(nav.id);i.z=Math.min(3,Math.max(1,(i.z||1)+dz));save();read()};
+async function openEpub(i,buf){const z=await unz(buf),T=async n=>TD.decode(await z[n]()),opf=(await T('META-INF/container.xml')).match(/full-path="([^"]+)"/)[1],dir=opf.replace(/[^/]*$/,''),o=new DOMParser().parseFromString(await T(opf),'application/xml'),mf={},its=[...o.getElementsByTagName('item')];
+its.forEach(x=>mf[x.getAttribute('id')]=x.getAttribute('href'));
+const sp=[...o.getElementsByTagName('itemref')].map(r=>mf[r.getAttribute('idref')]).filter(Boolean).map(h=>dir+decodeURIComponent(h.split('#')[0])).filter(n=>z[n]),tt=[];
+try{const nc=its.find(x=>x.getAttribute('media-type')=='application/x-dtbncx+xml'),np=nc&&dir+nc.getAttribute('href');if(np&&z[np]){const nd=new DOMParser().parseFromString(await T(np),'application/xml');[...nd.getElementsByTagName('navPoint')].forEach(p=>{const s=p.getElementsByTagName('content')[0],x=p.getElementsByTagName('text')[0];if(s&&x){const k=sp.indexOf(dir+decodeURIComponent(s.getAttribute('src').split('#')[0]));if(k>=0&&!tt[k])tt[k]=x.textContent.trim()}})}}catch(_){}
+if(!sp.length)throw 0;RD={iid:i.id,z,sp,tt,urls:[]};document.documentElement.style.setProperty('--rs',(S.set.rsz||18)+'px');showCh(Math.min(i.ch||0,sp.length-1))}
+async function showCh(k){const i=get(RD.iid);if(!i)return;i.ch=k;save();const n=RD.sp[k],base=n.replace(/[^/]*$/,''),d=new DOMParser().parseFromString(TD.decode(await RD.z[n]()),'text/html'),MT={png:'image/png',jpg:'image/jpeg',jpeg:'image/jpeg',gif:'image/gif',svg:'image/svg+xml',webp:'image/webp'};
+RD.urls.forEach(u=>URL.revokeObjectURL(u));RD.urls=[];
+d.querySelectorAll('script,style,link,iframe,object,form,meta,title').forEach(x=>x.remove());
+for(const im of d.querySelectorAll('img')){let ok=0;try{const p=decodeURIComponent(new URL(im.getAttribute('src')||'','http://x/'+base).pathname.slice(1)),f=RD.z[p];if(f){const u=URL.createObjectURL(new Blob([await f()],{type:MT[p.split('.').pop().toLowerCase()]||'image/jpeg'}));RD.urls.push(u);im.src=u;ok=1}}catch(_){}if(!ok)im.remove()}
+d.querySelectorAll('*').forEach(e=>{[...e.attributes].forEach(a=>{if(/^on/.test(a.name)||a.name=='style'||a.name=='class'||(e.tagName=='A'&&a.name=='href'))e.removeAttribute(a.name)})});
+if(nav.v!='read')return;const t=$('#rt');t.style.cssText='';t.innerHTML=d.body.innerHTML;$('#rd').scrollTop=0;
+$('#rbar').innerHTML=`<button onclick="rch(-1)">‹</button><button onclick="rtoc()">${k+1} / ${RD.sp.length} ☰</button><span><button onclick="rsz(-1)">A−</button><button onclick="rsz(1)">A+</button></span><button onclick="rch(1)">›</button>`}
+window.rch=d=>{const k=(get(RD.iid).ch||0)+d;if(k>=0&&k<RD.sp.length)showCh(k)};
+window.rgo=k=>{cl();showCh(k)};
+window.rtoc=()=>sheet('<h3>Contents</h3>'+RD.sp.map((_,k)=>`<button onclick="rgo(${k})">${k==get(RD.iid).ch?'▶ ':''}${esc(RD.tt[k]||'Section '+(k+1))}</button>`).join(''));
+
+/* story Bible */
+const SEC=[['chars','🤼‍♀️','Characters'],['set','🏡','Setting'],['arc','🏂','Character arcs'],['out','📝','Chapter outline'],['brn','💭','Random brainstorming']],PC=[['#fde0ea','#f9c6d8'],['#ffefd6','#fadfae'],['#ede1fb','#d9c6f4'],['#dff3ea','#c6e8d9'],['#dcebfb','#c3dbf5']];
+const secs=fid=>S.items.filter(x=>x.bf==fid&&!x.del).sort((a,b)=>SEC.findIndex(s=>s[0]==a.sec)-SEC.findIndex(s=>s[0]==b.sec)),notes=s=>(s.tabs||[]).filter(n=>n.t||txt(n.c).trim());
+window.bib=id=>{cl();if(!secs(id).length)SEC.forEach(([k,e,n])=>S.items.push({id:uid(),type:'folder',bf:id,sec:k,emoji:e,title:n,tabs:[],up:Date.now(),cr:Date.now(),log:[{at:Date.now(),e:'Created'}]}));save();nav={v:'bible',id};R()};
+function bible(){const f=get(nav.id),L=secs(f.id);if(!L.length){nav={v:'home'};return R()}
+$('#app').innerHTML=`<header><button onclick="nav={v:'home'};R()">←</button><h1 style="font-size:22px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">🧠🖊️ ${esc(f.title)}</h1></header><main><p class=em style="margin:0 0 14px;text-align:left">Story Bible for ${esc(f.title)}. Keep everything you need to remember here.</p><div class=cr>${L.map((s,k)=>{const n=notes(s).length;return `<button style="--a:${PC[k%5][0]};--b:${PC[k%5][1]}" onclick="nav={v:'bsec',id:'${s.id}'};R()"><b>${s.emoji} ${esc(s.title)}</b><i>${n} note${n==1?'':'s'}</i></button>`}).join('')}</div></main>`}
+function bsec(){const s=get(nav.id),N=notes(s);
+$('#app').innerHTML=`<header><button onclick="nav={v:'bible',id:'${s.bf}'};R()">←</button><h1 style="font-size:22px">${s.emoji} ${esc(s.title)}</h1></header><main><div class=grid>${N.map(n=>`<div class=cd style="--c:${col(n.id)}" onclick="nav={v:'edit',id:'${s.id}',tab:'${n.id}'};R()"><div class=pv>${esc(txt(n.c).slice(0,160))}</div><div class=ct><span>${esc(n.t||'Untitled')}</span><button onclick="event.stopPropagation();bnm('${s.id}','${n.id}')">⋯</button></div></div>`).join('')||'<p class=em style="grid-column:1/-1">No notes yet. Tap + to add your first.</p>'}</div></main><button class=fab onclick="bnew('${s.id}')">+</button>`}
+window.bnew=sid=>{const s=get(sid);ask('Name your note','',n=>{const t={id:uid(),t:n,c:''};s.tabs.push(t);s.up=Date.now();save();nav={v:'edit',id:sid,tab:t.id};R()})};
+window.bnm=(sid,nid)=>{const t=get(sid).tabs.find(x=>x.id==nid);sheet(`<h3>${esc(t.t||'Untitled')}</h3><button onclick="bnr('${sid}','${nid}')">✏️ Rename</button><button onclick="bnd('${sid}','${nid}')">🗑️ Delete note</button>`)};
+window.bnr=(sid,nid)=>{cl();const t=get(sid).tabs.find(x=>x.id==nid);ask('Rename note',t.t||'',n=>{t.t=n;save();R()})};
+window.bnd=(sid,nid)=>sheet(`<h3>Delete this note?</h3><p style="color:var(--mut)">This can’t be undone.</p><div class=row><button onclick="cl()">Cancel</button><button class=p onclick="bndo('${sid}','${nid}')">Delete</button></div>`);
+window.bndo=(sid,nid)=>{cl();const s=get(sid);s.tabs=s.tabs.filter(x=>x.id!=nid);s.up=Date.now();save();R()};
+/* peek at the Bible from the writing page */
+window.bibPeek=fid=>sheet('<h3>🧠🖊️ Story Bible</h3>'+secs(fid).map(s=>`<button onclick="bpk('${s.id}')">${s.emoji} ${esc(s.title)} · ${notes(s).length}</button>`).join(''));
+window.bpk=sid=>{const s=get(sid),N=notes(s);sheet(`<h3>${s.emoji} ${esc(s.title)}</h3>`+(N.map(n=>`<button onclick="bpn('${sid}','${n.id}')">${esc(n.t||'Untitled')}</button>`).join('')||'<p style="color:var(--mut)">No notes yet.</p>')+`<div class=row><button onclick="bibPeek('${s.bf}')">← Back</button></div>`)};
+window.bpn=(sid,nid)=>{const n=get(sid).tabs.find(x=>x.id==nid);sheet(`<h3>${esc(n.t||'Untitled')}</h3><div style="font-family:var(--ef);line-height:1.7;max-height:52vh;overflow:auto">${n.c||''}</div><div class=row><button onclick="bpk('${sid}')">← Back</button><button class=p onclick="cl();nav={v:'edit',id:'${sid}',tab:'${nid}'};R()">Open to edit</button></div>`)};
+
+/* wiring */
+R=function(){ap();if(['edit','read','bsec','bible'].includes(nav.v)&&!get(nav.id))nav={v:'home'};
+document.body.classList.toggle('ed',nav.v=='edit'||nav.v=='read');
+if(!S.set.w){welcome();return}
+if(nav.v!='edit'&&window.late){const s=window.late;window.late=null;if(!window.sync())window.apply(s)}
+if(S.set.rsz)document.documentElement.style.setProperty('--rs',S.set.rsz+'px');
+({home,bin,edit,read,bible,bsec}[nav.v]||home)();if(nav.v=='home')lpb()};
+const o3=opn;opn=function(id){const i=get(id);if(!i)return;if(i.type=='book'){nav={v:'read',id};R();return}if(i.bf){nav={v:'bsec',id};R();return}o3(id)};
+const h3=home;home=function(){h3();document.querySelectorAll('.cd[data-id]').forEach(c=>{const i=get(c.dataset.id);if(!i)return;if(i.bf){c.remove();return}
+if(i.type=='book'){const p=c.querySelector('.pv');if(p)p.innerHTML='<div style="font-size:34px;text-align:center;padding-top:22px">'+(i.fmt=='pdf'?'📕':'📖')+'<br><span style="font-size:12px">'+i.fmt.toUpperCase()+'</span></div>';const s=c.querySelector('.ct span');if(s)s.innerHTML=s.innerHTML.replace('📄','📖')}})};
+const m3=menu;menu=function(id){const i=get(id);if(!i)return;
+if(i.type=='book'){sheet(`<h3>${esc(i.title)}</h3><div class=mg>${[['📖','Read','op'],['✏️','Rename','rn'],['ℹ️','Details','det'],['📌',i.pin?'Unpin':'Pin','pin'],['🗑️','Move to bin','dl2']].map(([e,l,k])=>`<button onclick="${k=='op'?`cl();opn('${id}')`:`act('${k}','${id}')`}"><span>${e}</span>${l}</button>`).join('')}</div>`);return}
+m3(id);if(i.type=='folder'&&!i.bf){const has=secs(id).length>0,g=$('#sh .mg');g&&g.insertAdjacentHTML('afterbegin',`<button style="grid-column:1/-1" onclick="bib('${id}')"><span>🧠</span>${has?'Open':'Create'} story Bible for ${esc(i.title)}</button>`)}};
+const e3=edit;edit=function(){e3();const[i]=cur();if(!i)return;const bs=[...$('#app header').querySelectorAll('button')];
+if(i.bf){bs[0].setAttribute('onclick',`nav={v:'bsec',id:'${i.id}'};R()`);bs.forEach(b=>{if(b.textContent.includes('▾'))b.remove()});const c=$('.chn');c&&c.remove();const t=$('#cht');t&&t.setAttribute('data-ph','Note title')}
+else if(i.type=='folder'&&secs(i.id).length){const f=bs.find(b=>b.textContent.includes('🔍'));f&&f.insertAdjacentHTML('beforebegin',`<button onclick="bibPeek('${i.id}')" title="Story Bible" style="padding:8px 4px;font-size:15px">🧠🖊️</button>`)}};
+const d3=drw;drw=function(){d3();const[i]=cur();if(i&&i.bf)document.querySelectorAll('#sh .dr').forEach(b=>{if(b.textContent.includes('Document tabs'))b.remove()})};
+
+/* easy sign-in: one Continue button signs in or creates the account */
+login=function(){$('#app').innerHTML='<main style="max-width:380px;margin-top:6vh;text-align:center"><div style="font-size:48px">🌸</div><h1 style="font-size:34px;margin:6px 0;flex:none">Hydee writes</h1><p style="color:var(--mut);line-height:1.5">Keep your writing on every device. New here? Just enter an email and a password and we’ll set you up.</p><button class=p onclick="gs()" style="width:100%;padding:13px;margin:12px 0">Continue with Google</button><div style="color:var(--mut)">or</div><input type=text inputmode=email autocapitalize=none id=em placeholder="Email" autocomplete=email><input type=password id=pw placeholder="Password (6+ characters)" autocomplete=current-password><button class=p id=go onclick="cont()" style="width:100%;padding:13px;margin-top:8px">Continue</button><p id=er style="color:#b3261c"></p><button onclick="R()">← Back to my writing</button></main>'};
+window.gin=()=>login();
+window.cont=async()=>{const b=$('#go');if(b){b.disabled=true;b.textContent='One moment…'}await es(0);let e=$('#er');
+if(e&&/Wrong email or password/.test(e.textContent)){e.textContent='';await es(1);e=$('#er');if(e&&/already in use/.test(e.textContent))e.textContent='That email already has an account, but the password doesn’t match. Try again, or use Continue with Google.'}
+const b2=$('#go');if(b2){b2.disabled=false;b2.textContent='Continue'}};
+
+R();
+})();
+</script>
